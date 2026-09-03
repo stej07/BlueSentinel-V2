@@ -1,0 +1,54 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# AI4Shipwrecks / large datasets
+data/raw/
+data/preprocessed/
+data/augmented/
+
+# Generated dataset splits
+data/splits/
+
+# Training outputs / model checkpoints
+ai/training/runs/
+ai/training/checkpoints/
+ai/evaluation/results/
+ai/inference/results/
+
+# Model files
+*.pt
+*.pth
+*.onnx
+*.safetensors
+
+# Python-generated temporary files
+*.tmp
+*.cache

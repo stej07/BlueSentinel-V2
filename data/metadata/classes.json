@@ -1,0 +1,34 @@
+{
+  "classes": [
+    {
+      "id": 0,
+      "name": "ghost_net",
+      "display_name": "Ghost Net"
+    },
+    {
+      "id": 1,
+      "name": "shipwreck",
+      "display_name": "Shipwreck"
+    },
+    {
+      "id": 2,
+      "name": "pipe",
+      "display_name": "Pipe"
+    },
+    {
+      "id": 3,
+      "name": "debris",
+      "display_name": "Debris"
+    },
+    {
+      "id": 4,
+      "name": "anomaly",
+      "display_name": "Anomaly"
+    },
+    {
+      "id": 5,
+      "name": "seabed",
+      "display_name": "Seabed / Background"
+    }
+  ]
+}
