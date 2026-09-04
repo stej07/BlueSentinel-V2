@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Activity,
   AlertTriangle,
@@ -40,7 +40,36 @@ type Detection = {
   className: string;
 };
 
-const detections: Detection[] = [];
+const demoDetections: Detection[] = [
+  {
+    type: "Ghost Net",
+    confidence: 92.1,
+    time: "10:42:18",
+    scan: "SONAR-1042",
+    className: "ghost-net",
+  },
+  {
+    type: "Shipwreck",
+    confidence: 88.7,
+    time: "10:45:31",
+    scan: "SONAR-1045",
+    className: "shipwreck",
+  },
+  {
+    type: "Pipe",
+    confidence: 81.3,
+    time: "10:49:07",
+    scan: "SONAR-1049",
+    className: "pipe",
+  },
+  {
+    type: "Anomaly",
+    confidence: 74.2,
+    time: "10:53:44",
+    scan: "SONAR-1053",
+    className: "anomaly",
+  },
+];
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -55,6 +84,20 @@ function App() {
   });
 
   const [activePage, setActivePage] = useState("Dashboard");
+  const [demoMode, setDemoMode] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [demoTime, setDemoTime] = useState(() => {    const now = new Date();    return now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();  });
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setCurrentTime(new Date());
+      if (demoMode) {
+        setDemoTime((time) => (time + 1) % (24 * 60 * 60));
+      }
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [demoMode]);
 
   const toggleSection = (name: keyof typeof openSections) => {
     setOpenSections((current) => ({
@@ -225,6 +268,15 @@ function App() {
           </div>
 
           <div className="operator-area">
+            <button
+              className={`mode-toggle ${demoMode ? "demo" : "real"}`}
+              onClick={() => setDemoMode(!demoMode)}
+              title={demoMode ? "Switch to real mode" : "Switch to demo mode"}
+            >
+              <span className="mode-dot" />
+              <span>{demoMode ? "DEMO MODE" : "REAL MODE"}</span>
+            </button>
+
             <div className="survey-unit">
               <Waves size={21} />
               <span>Oceanic Survey Unit</span>
@@ -244,8 +296,11 @@ function App() {
 
         {activePage === "Dashboard" ? (
           <Dashboard
-            detections={detections}
+            detections={demoMode ? demoDetections : []}
+            demoMode={demoMode}
             onDetection={setSelectedDetection}
+            currentTime={currentTime}
+            demoTime={demoTime}
           />
         ) : activePage === "Upload Sonar" ||
           activePage === "Preprocessing" ||
@@ -406,20 +461,81 @@ function SubButton({
 
 function Dashboard({
   detections,
+  demoMode,
   onDetection,
+  currentTime,
+  demoTime,
 }: {
   detections: Detection[];
+  demoMode: boolean;
   onDetection: (d: Detection) => void;
+  currentTime: Date;
+  demoTime: number;
 }) {
+  const formatTime = (date: Date) =>
+    date.toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Kolkata",
+    });
+
+  const formatDemoTime = (seconds: number) => {
+    const h = Math.floor(seconds / 3600) % 24;
+    const m = Math.floor((seconds % 3600) / 60);
+    const sec = seconds % 60;
+
+    return [h, m, sec]
+      .map((value) => String(value).padStart(2, "0"))
+      .join(":");
+  };
+
   return (
     <div className="dashboard">
       <div className="kpi-grid">
-        <KPI icon={<Waves />} label="SONAR SCANS" value="—" text="No live mission data" />
-        <KPI icon={<ScanLine />} label="DETECTIONS" value="—" text="Model not trained" cyan />
-        <KPI icon={<ShieldCheck />} label="HIGH CONFIDENCE" value="—" text="No AI results" gold />
-        <KPI icon={<AlertTriangle />} label="ANOMALIES" value="—" text="No AI results" red />
-        <KPI icon={<Map />} label="AREA COVERED" value="—" text="Navigation data required" aqua />
-        <KPI icon={<Clock3 />} label="MISSION TIME" value="—" text="No active mission" purple />
+        <KPI
+          icon={<Waves />}
+          label="SONAR SCANS"
+          value={demoMode ? "128" : "—"}
+          text={demoMode ? "Simulated mission scans" : "No live mission data"}
+        />
+        <KPI
+          icon={<ScanLine />}
+          label="DETECTIONS"
+          value={demoMode ? String(detections.length) : "—"}
+          text={demoMode ? "Simulated AI findings" : "Model not trained"}
+          cyan
+        />
+        <KPI
+          icon={<ShieldCheck />}
+          label="HIGH CONFIDENCE"
+          value={demoMode ? "3" : "—"}
+          text={demoMode ? "≥ 80% confidence" : "No AI results"}
+          gold
+        />
+        <KPI
+          icon={<AlertTriangle />}
+          label="ANOMALIES"
+          value={demoMode ? "1" : "—"}
+          text={demoMode ? "Simulated anomaly finding" : "No AI results"}
+          red
+        />
+        <KPI
+          icon={<Map />}
+          label="AREA COVERED"
+          value={demoMode ? "2.45" : "—"}
+          unit={demoMode ? "km²" : undefined}
+          text={demoMode ? "Simulated survey area" : "Navigation data required"}
+          aqua
+        />
+        <KPI
+          icon={<Clock3 />}
+          label="MISSION TIME"
+          value={demoMode ? "01:42" : "—"}
+          text={demoMode ? "Simulated mission duration" : "No active mission"}
+          purple
+        />
       </div>
 
       <div className="top-grid">
@@ -428,25 +544,34 @@ function Dashboard({
           detections={detections}
           onDetection={onDetection}
         />
-        <DetectionSummary />
+        <DetectionSummary demoMode={demoMode} detections={detections} />
       </div>
 
       <div className="bottom-grid">
-        <GISMap />
-        <MissionTimeline />
-        <SystemStatus />
+        <GISMap demoMode={demoMode} />
+        <MissionTimeline demoMode={demoMode} />
+        <SystemStatus demoMode={demoMode} />
       </div>
 
       <div className="mission-footer">
-        <FooterItem label="DATE" value="03 Sep 2026" icon={<Clock3 />} />
-        <FooterItem label="TIME (IST)" value="—" icon={<Clock3 />} />
+        <FooterItem
+          label="DATE"
+          value={currentTime.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            timeZone: "Asia/Kolkata",
+          })}
+          icon={<Clock3 />}
+        />
+        <FooterItem label="TIME (IST)" value={demoMode ? formatDemoTime(demoTime) : formatTime(currentTime)} icon={<Clock3 />} />
         <FooterItem
           label="LOCATION"
-          value="Not available"
+          value={demoMode ? "SIMULATED" : "Not available"}
           icon={<MapPin />}
         />
-        <FooterItem label="SEA STATE" value="Not available" icon={<Waves />} />
-        <FooterItem label="VESSEL" value="Not configured" icon={<Anchor />} />
+        <FooterItem label="SEA STATE" value={demoMode ? "CALM (SIM)" : "Not available"} icon={<Waves />} />
+        <FooterItem label="VESSEL" value={demoMode ? "DEMO AUV" : "Not configured"} icon={<Anchor />} />
       </div>
     </div>
   );
@@ -633,62 +758,129 @@ function AIFindings({
   );
 }
 
-function DetectionSummary() {
+function DetectionSummary({
+  demoMode,
+  detections,
+}: {
+  demoMode: boolean;
+  detections: Detection[];
+}) {
+  const high = detections.filter((d) => d.confidence >= 80).length;
+  const medium = detections.filter((d) => d.confidence < 80).length;
+
   return (
     <section className="panel summary">
       <PanelHeader
         icon={<BarChart3 />}
         title="DETECTION SUMMARY"
-        action="NO RESULTS"
+        action={demoMode ? "SIMULATED" : "NO RESULTS"}
       />
 
-      <div className="empty-state">
-        <BarChart3 size={34} />
-        <strong>Awaiting CNN inference</strong>
-        <span>
-          Detection statistics will appear after the trained model
-          processes sonar imagery.
-        </span>
-      </div>
+      {demoMode ? (
+        <div className="demo-summary">
+          <div className="summary-total">
+            <strong>{detections.length}</strong>
+            <span>TOTAL FINDINGS</span>
+          </div>
 
-      <div className="summary-stats">
-        <div>
-          <ShieldCheck />
-          <span>High Confidence</span>
-          <b>—</b>
-        </div>
+          <div className="summary-bars">
+            <div className="summary-row">
+              <span>
+                <i className="summary-dot high" />
+                High confidence
+              </span>
+              <strong>{high}</strong>
+            </div>
 
-        <div>
-          <Search />
-          <span>Review Required</span>
-          <b>—</b>
+            <div className="summary-row">
+              <span>
+                <i className="summary-dot medium" />
+                Medium confidence
+              </span>
+              <strong>{medium}</strong>
+            </div>
+          </div>
+
+          <div className="summary-disclaimer">
+            DEMO DATA — NOT CNN RESULTS
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="empty-state">
+          <BarChart3 size={34} />
+          <strong>Awaiting CNN inference</strong>
+          <span>
+            Detection statistics will appear after the trained model
+            processes a sonar image.
+          </span>
+        </div>
+      )}
     </section>
   );
 }
 
-function GISMap() {
+function GISMap({ demoMode }: { demoMode: boolean }) {
   return (
     <section className="panel map-panel">
       <PanelHeader
         icon={<Globe2 />}
         title="GIS MAP"
-        action="LOCATION UNAVAILABLE"
+        action={demoMode ? "SIMULATED LOCATION" : "LOCATION UNAVAILABLE"}
       />
 
       <div className="map">
         <div className="coastline" />
         <div className="map-grid" />
 
-        <div className="empty-map-state">
-          <MapPin size={32} />
-          <strong>No georeferenced detections</strong>
-          <span>
-            GPS or navigation data is required to place sonar
-            detections on the GIS map.
-          </span>
-        </div>
+        {demoMode ? (
+          <>
+            <div className="demo-map-label">SIMULATED SURVEY TRACK</div>
+
+            <div className="demo-track">
+              <span className="track-point p1" />
+              <span className="track-point p2" />
+              <span className="track-point p3" />
+              <span className="track-point p4" />
+            </div>
+
+            <button
+              className="demo-marker marker-1"
+              title="Ghost Net — simulated"
+            >
+              <MapPin size={22} />
+            </button>
+
+            <button
+              className="demo-marker marker-2"
+              title="Shipwreck — simulated"
+            >
+              <MapPin size={22} />
+            </button>
+
+            <button
+              className="demo-marker marker-3"
+              title="Pipe — simulated"
+            >
+              <MapPin size={22} />
+            </button>
+
+            <button
+              className="demo-marker marker-4"
+              title="Anomaly — simulated"
+            >
+              <MapPin size={22} />
+            </button>
+          </>
+        ) : (
+          <div className="empty-map-state">
+            <MapPin size={32} />
+            <strong>No georeferenced detections</strong>
+            <span>
+              GPS or navigation data is required to place sonar
+              detections on the GIS map.
+            </span>
+          </div>
+        )}
 
         <div className="map-tools">
           <button title="Zoom in">+</button>
@@ -708,28 +900,61 @@ function GISMap() {
   );
 }
 
-function MissionTimeline() {
+function MissionTimeline({ demoMode }: { demoMode: boolean }) {
+  const events = [
+    ["09:00", "Mission initialized", "Survey mission started"],
+    ["09:12", "Sonar acquisition", "Survey scan stream active"],
+    ["10:42", "AI detection", "Ghost Net detected — 92.1%"],
+    ["10:45", "AI detection", "Shipwreck detected — 88.7%"],
+    ["10:49", "AI detection", "Pipe detected — 81.3%"],
+    ["10:53", "Anomaly detected", "Anomaly detected — 74.2%"],
+  ];
+
   return (
     <section className="panel timeline">
       <PanelHeader
         icon={<Clock3 />}
         title="MISSION TIMELINE"
-        action="NO ACTIVE MISSION"
+        action={demoMode ? "SIMULATED MISSION" : "NO ACTIVE MISSION"}
       />
 
-      <div className="empty-state">
-        <Clock3 size={34} />
-        <strong>No mission events</strong>
-        <span>
-          Create a new survey mission to begin recording
-          acquisition and processing events.
-        </span>
-      </div>
+      {demoMode ? (
+        <div className="demo-timeline">
+          {events.map(([time, title, description], index) => (
+            <div className="timeline-event" key={`${time}-${title}`}>
+              <div className="timeline-marker">
+                <span />
+              </div>
+
+              <div className="timeline-content">
+                <div>
+                  <strong>{title}</strong>
+                  <time>{time}</time>
+                </div>
+                <small>{description}</small>
+              </div>
+
+              {index === events.length - 1 && (
+                <span className="timeline-simulated">SIMULATED</span>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="empty-state">
+          <Clock3 size={34} />
+          <strong>No mission events</strong>
+          <span>
+            Create a new survey mission to begin recording
+            acquisition and processing events.
+          </span>
+        </div>
+      )}
     </section>
   );
 }
 
-function SystemStatus() {
+function SystemStatus({ demoMode }: { demoMode: boolean }) {
   return (
     <section className="panel system">
       <PanelHeader
@@ -746,13 +971,13 @@ function SystemStatus() {
       <Status
         icon={<BrainCircuit />}
         name="AI Engine"
-        value="PYTORCH PENDING"
+        value={demoMode ? "SIMULATED" : "PYTORCH PENDING"}
       />
 
       <Status
         icon={<Navigation />}
         name="GPS / Navigation"
-        value="DATA REQUIRED"
+        value={demoMode ? "SIMULATED" : "DATA REQUIRED"}
       />
 
       <div className="resource">
@@ -767,7 +992,7 @@ function SystemStatus() {
         <div>
           <Activity size={18} />
           <span>Mission</span>
-          <b>INACTIVE</b>
+          <b>{demoMode ? "DEMO ACTIVE" : "INACTIVE"}</b>
         </div>
       </div>
     </section>
