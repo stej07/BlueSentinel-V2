@@ -1,0 +1,16 @@
+api/
+data/
+.venv/
+node_modules/
+dist/
+*.pt
+*.pth
+*.pyc
+__pycache__/
+*.backup
+*.bak
+*_backup.*
+*.before_*
+BlueSentinel_AI_DIAGNOSTIC.txt
+bluesentinel_integration_context.txt
+/ai/
