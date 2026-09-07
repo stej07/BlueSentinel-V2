@@ -1,0 +1,77 @@
+======================================================================
+ BLUESENTINEL V2 — COMPLETE AI DIAGNOSTIC
+======================================================================
+
+[1] ENVIRONMENT
+Project: /home/tej/BlueSentinel-V2
+Python: Python 3.14.6
+PyTorch: 2.14.0+cu130
+Device: CPU
+
+[2] CHECKPOINT
+Checkpoint: ai/training/checkpoints/best_unet.pt
+Epoch: 6
+Validation Dice: 0.5875760623645571
+
+[3] MODEL
+Architecture: U-Net
+Base channels: 16
+Parameters: 482,449
+Model load: PASS
+
+[4] VALIDATION THRESHOLD SWEEP
+Threshold | Dice   | IoU    | Precision | Recall
+    0.01 | 0.1362 | 0.0730 | 0.0817   | 0.4076
+    0.02 | 0.2026 | 0.1127 | 0.2009   | 0.2042
+    0.03 | 0.1734 | 0.0949 | 0.2896   | 0.1237
+    0.04 | 0.1301 | 0.0696 | 0.3462   | 0.0801
+    0.05 | 0.0906 | 0.0475 | 0.4205   | 0.0508
+    0.06 | 0.0578 | 0.0298 | 0.4780   | 0.0308
+    0.07 | 0.0319 | 0.0162 | 0.4851   | 0.0165
+    0.08 | 0.0114 | 0.0057 | 0.4967   | 0.0058
+    0.09 | 0.0029 | 0.0015 | 0.5389   | 0.0015
+    0.10 | 0.0008 | 0.0004 | 0.3945   | 0.0004
+    0.12 | 0.0001 | 0.0000 | 0.1745   | 0.0000
+    0.15 | 0.0000 | 0.0000 | 0.0081   | 0.0000
+BEST VALIDATION THRESHOLD: 0.02
+BEST VALIDATION DICE: 0.2026
+
+[5] UNTOUCHED TEST THRESHOLD SWEEP
+Probability maps found: 120
+Threshold | Dice   | IoU    | Precision | Recall
+    0.01 | 0.0236 | 0.0119 | 0.0120   | 0.8639 | Pred+ 368,384,560
+    0.02 | 0.0258 | 0.0131 | 0.0131   | 0.8420 | Pred+ 326,974,318
+    0.03 | 0.0271 | 0.0137 | 0.0138   | 0.8329 | Pred+ 308,276,483
+    0.04 | 0.0287 | 0.0146 | 0.0146   | 0.8214 | Pred+ 286,150,900
+    0.05 | 0.0298 | 0.0151 | 0.0152   | 0.8148 | Pred+ 273,813,505
+    0.06 | 0.0313 | 0.0159 | 0.0159   | 0.8058 | Pred+ 257,548,310
+    0.07 | 0.0322 | 0.0164 | 0.0165   | 0.8005 | Pred+ 247,890,933
+    0.08 | 0.0336 | 0.0171 | 0.0172   | 0.7933 | Pred+ 235,500,137
+    0.09 | 0.0343 | 0.0174 | 0.0175   | 0.7887 | Pred+ 229,349,353
+    0.10 | 0.0351 | 0.0179 | 0.0180   | 0.7824 | Pred+ 221,911,480
+    0.12 | 0.0363 | 0.0185 | 0.0186   | 0.7732 | Pred+ 211,777,641
+    0.15 | 0.0379 | 0.0193 | 0.0195   | 0.7601 | Pred+ 199,121,683
+BEST TEST THRESHOLD: 0.15
+BEST TEST DICE: 0.0379
+
+[6] CNN API HEALTH
+{"status":"ready","mode":"REAL CNN","model":"BlueSentinel V2 U-Net","checkpoint":"/home/tej/BlueSentinel-V2/ai/training/checkpoints/best_unet.pt","epoch":6,"validation_dice":0.5875760623645571,"device":"cpu","threshold":0.5}
+
+[7] FINAL ASSESSMENT
+----------------------------------------------------------------------
+Validation-best threshold : 0.02
+Test-best threshold       : 0.15
+Threshold agreement       : DIFFERENT
+Do NOT change the API threshold yet.
+Validation and test behavior differ.
+
+Model scope:
+Binary shipwreck segmentation trained on AI4Shipwrecks.
+NOT a six-class marine-debris classifier.
+No fake detections should be generated.
+
+Safety:
+Checkpoint modified: NO
+Training performed: NO
+Dataset modified: NO
+Files deleted: NO

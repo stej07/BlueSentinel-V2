@@ -1,0 +1,18 @@
+{
+  "project": "BlueSentinel-V2",
+  "model": "BlueSentinel CNN U-Net v1",
+  "task": "binary shipwreck segmentation",
+  "training_from_scratch": true,
+  "yolo_used": false,
+  "dataset": "AI4Shipwrecks",
+  "train_pairs": 117,
+  "validation_pairs": 24,
+  "test_pairs": 120,
+  "positive_pixel_ratio": 0.012343996076171251,
+  "parameters": 482449,
+  "best_validation_dice": 0.6742491788633629,
+  "best_epoch": 6,
+  "checkpoint": "/home/tej/BlueSentinel-V2/ai/training/bluesentinel_cnn_v1/bluesentinel_cnn_v1.pt",
+  "elapsed_seconds": 2409.26,
+  "status": "COMPLETE"
+}

@@ -1,0 +1,458 @@
+===== PACKAGE.JSON =====
+{
+  "name": "bluesentinel-v2",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lucide-react": "^1.39.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "recharts": "^3.10.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "eslint": "^10.9.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.4",
+    "globals": "^17.11.0",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.67.0",
+    "vite": "^8.2.2"
+  }
+}
+
+===== SRC FILES =====
+src/App.css
+src/App.tsx
+src/assets/hero.png
+src/components/ai/DatasetPage.tsx
+src/components/sonar/SonarLaboratory.tsx
+src/index.css
+src/main.tsx
+
+===== PYTHON AI FILES =====
+ai/augmentation/augment_dataset.py
+ai/dataset/create_group_split.py
+ai/dataset/create_hard_negatives.py
+ai/dataset/hard_negative_dataset.py
+ai/dataset/inspect_dataset.py
+ai/dataset/patch_dataset_512_backup.py
+ai/dataset/patch_dataset.py
+ai/dataset/patch_dataset_v1_backup.py
+ai/dataset/__pycache__/create_hard_negatives.cpython-314.pyc
+ai/dataset/__pycache__/hard_negative_dataset.cpython-314.pyc
+ai/dataset/__pycache__/patch_dataset.cpython-314.pyc
+ai/dataset/__pycache__/shipwreck_dataset.cpython-314.pyc
+ai/dataset/shipwreck_dataset_fullimage_backup.py
+ai/dataset/shipwreck_dataset.py
+ai/dataset/split_dataset.py
+ai/evaluation/analyze_tiled_predictions.py
+ai/evaluation/diagnostics/Artificial_Reef_01.png
+ai/evaluation/diagnostics/Artificial_Reef_04.png
+ai/evaluation/diagnostics/Barge_No_1_03.png
+ai/evaluation/diagnostics/Barge_No_1_14.png
+ai/evaluation/evaluate_test.py
+ai/evaluation/evaluate_tiled.py
+ai/evaluation/final_model_comparison.py
+ai/evaluation/__pycache__/analyze_tiled_predictions.cpython-314.pyc
+ai/evaluation/__pycache__/evaluate_test.cpython-314.pyc
+ai/evaluation/__pycache__/evaluate_tiled.cpython-314.pyc
+ai/evaluation/__pycache__/final_model_comparison.cpython-314.pyc
+ai/evaluation/__pycache__/threshold_sweep.cpython-314.pyc
+ai/evaluation/__pycache__/validate_hard_negative.cpython-314.pyc
+ai/evaluation/threshold_sweep.py
+ai/evaluation/tiled_diagnostics/Artificial_Reef_01_prediction.png
+ai/evaluation/tiled_diagnostics/Artificial_Reef_01_probability.png
+ai/evaluation/tiled_diagnostics/Artificial_Reef_02_prediction.png
+ai/evaluation/tiled_diagnostics/Artificial_Reef_02_probability.png
+ai/evaluation/tiled_diagnostics/Artificial_Reef_03_prediction.png
+ai/evaluation/tiled_diagnostics/Artificial_Reef_03_probability.png
+ai/evaluation/tiled_diagnostics/Artificial_Reef_04_prediction.png
+ai/evaluation/tiled_diagnostics/Artificial_Reef_04_probability.png
+ai/evaluation/tiled_diagnostics/Artificial_Reef_05_prediction.png
+ai/evaluation/tiled_diagnostics/Artificial_Reef_05_probability.png
+ai/evaluation/tiled_diagnostics/Artificial_Reef_06_prediction.png
+ai/evaluation/tiled_diagnostics/Artificial_Reef_06_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_01_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_01_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_02_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_02_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_03_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_03_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_04_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_04_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_05_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_05_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_06_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_06_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_07_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_07_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_08_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_08_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_09_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_09_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_10_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_10_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_11_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_11_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_12_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_12_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_13_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_13_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_14_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_14_probability.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_15_prediction.png
+ai/evaluation/tiled_diagnostics/Barge_No_1_15_probability.png
+ai/evaluation/tiled_diagnostics/Corsair_01_prediction.png
+ai/evaluation/tiled_diagnostics/Corsair_01_probability.png
+ai/evaluation/tiled_diagnostics/Corsair_02_prediction.png
+ai/evaluation/tiled_diagnostics/Corsair_02_probability.png
+ai/evaluation/tiled_diagnostics/Corsair_03_prediction.png
+ai/evaluation/tiled_diagnostics/Corsair_03_probability.png
+ai/evaluation/tiled_diagnostics/Corsair_04_prediction.png
+ai/evaluation/tiled_diagnostics/Corsair_04_probability.png
+ai/evaluation/tiled_diagnostics/Corsican_01_prediction.png
+ai/evaluation/tiled_diagnostics/Corsican_01_probability.png
+ai/evaluation/tiled_diagnostics/Corsican_02_prediction.png
+ai/evaluation/tiled_diagnostics/Corsican_02_probability.png
+ai/evaluation/tiled_diagnostics/Corsican_03_prediction.png
+ai/evaluation/tiled_diagnostics/Corsican_03_probability.png
+ai/evaluation/tiled_diagnostics/Corsican_04_prediction.png
+ai/evaluation/tiled_diagnostics/Corsican_04_probability.png
+ai/evaluation/tiled_diagnostics/Corsican_05_prediction.png
+ai/evaluation/tiled_diagnostics/Corsican_05_probability.png
+ai/evaluation/tiled_diagnostics/Corsican_06_prediction.png
+ai/evaluation/tiled_diagnostics/Corsican_06_probability.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_01_prediction.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_01_probability.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_02_prediction.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_02_probability.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_03_prediction.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_03_probability.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_04_prediction.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_04_probability.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_05_prediction.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_05_probability.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_06_prediction.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_06_probability.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_07_prediction.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_07_probability.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_08_prediction.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_08_probability.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_09_prediction.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_09_probability.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_10_prediction.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_10_probability.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_11_prediction.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_11_probability.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_12_prediction.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_12_probability.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_13_prediction.png
+ai/evaluation/tiled_diagnostics/Haltiner_Barge_13_probability.png
+ai/evaluation/tiled_diagnostics/James_Davidson_01_prediction.png
+ai/evaluation/tiled_diagnostics/James_Davidson_01_probability.png
+ai/evaluation/tiled_diagnostics/James_Davidson_02_prediction.png
+ai/evaluation/tiled_diagnostics/James_Davidson_02_probability.png
+ai/evaluation/tiled_diagnostics/James_Davidson_03_prediction.png
+ai/evaluation/tiled_diagnostics/James_Davidson_03_probability.png
+ai/evaluation/tiled_diagnostics/James_Davidson_04_prediction.png
+ai/evaluation/tiled_diagnostics/James_Davidson_04_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_01_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_01_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_02_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_02_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_03_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_03_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_04_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_04_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_05_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_05_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_06_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_06_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_07_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_07_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_08_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_08_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_09_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_09_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_10_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_10_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_11_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_11_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_12_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_12_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_13_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_13_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_14_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_14_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_15_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_15_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_16_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_16_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_17_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_17_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_18_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_18_probability.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_19_prediction.png
+ai/evaluation/tiled_diagnostics/Lucinda_van_Valkenburg_19_probability.png
+ai/evaluation/tiled_diagnostics/Monohansett_01_prediction.png
+ai/evaluation/tiled_diagnostics/Monohansett_01_probability.png
+ai/evaluation/tiled_diagnostics/Monohansett_02_prediction.png
+ai/evaluation/tiled_diagnostics/Monohansett_02_probability.png
+ai/evaluation/tiled_diagnostics/Monohansett_03_prediction.png
+ai/evaluation/tiled_diagnostics/Monohansett_03_probability.png
+ai/evaluation/tiled_diagnostics/Monohansett_04_prediction.png
+ai/evaluation/tiled_diagnostics/Monohansett_04_probability.png
+ai/evaluation/tiled_diagnostics/Monohansett_05_prediction.png
+ai/evaluation/tiled_diagnostics/Monohansett_05_probability.png
+ai/evaluation/tiled_diagnostics/Monrovia_01_prediction.png
+ai/evaluation/tiled_diagnostics/Monrovia_01_probability.png
+ai/evaluation/tiled_diagnostics/Monrovia_02_prediction.png
+ai/evaluation/tiled_diagnostics/Monrovia_02_probability.png
+ai/evaluation/tiled_diagnostics/Monrovia_03_prediction.png
+ai/evaluation/tiled_diagnostics/Monrovia_03_probability.png
+ai/evaluation/tiled_diagnostics/Monrovia_04_prediction.png
+ai/evaluation/tiled_diagnostics/Monrovia_04_probability.png
+ai/evaluation/tiled_diagnostics/Monrovia_05_prediction.png
+ai/evaluation/tiled_diagnostics/Monrovia_05_probability.png
+ai/evaluation/tiled_diagnostics/Monrovia_06_prediction.png
+ai/evaluation/tiled_diagnostics/Monrovia_06_probability.png
+ai/evaluation/tiled_diagnostics/Monrovia_07_prediction.png
+ai/evaluation/tiled_diagnostics/Monrovia_07_probability.png
+ai/evaluation/tiled_diagnostics/Monrovia_08_prediction.png
+ai/evaluation/tiled_diagnostics/Monrovia_08_probability.png
+ai/evaluation/tiled_diagnostics/Shamrock_01_prediction.png
+ai/evaluation/tiled_diagnostics/Shamrock_01_probability.png
+ai/evaluation/tiled_diagnostics/Shamrock_02_prediction.png
+ai/evaluation/tiled_diagnostics/Shamrock_02_probability.png
+ai/evaluation/tiled_diagnostics/Shamrock_03_prediction.png
+ai/evaluation/tiled_diagnostics/Shamrock_03_probability.png
+ai/evaluation/tiled_diagnostics/Shamrock_04_prediction.png
+ai/evaluation/tiled_diagnostics/Shamrock_04_probability.png
+ai/evaluation/tiled_diagnostics/Shamrock_05_prediction.png
+ai/evaluation/tiled_diagnostics/Shamrock_05_probability.png
+ai/evaluation/tiled_diagnostics/Shamrock_06_prediction.png
+ai/evaluation/tiled_diagnostics/Shamrock_06_probability.png
+ai/evaluation/tiled_diagnostics/Viator_01_prediction.png
+ai/evaluation/tiled_diagnostics/Viator_01_probability.png
+ai/evaluation/tiled_diagnostics/Viator_02_prediction.png
+ai/evaluation/tiled_diagnostics/Viator_02_probability.png
+ai/evaluation/tiled_diagnostics/Viator_03_prediction.png
+ai/evaluation/tiled_diagnostics/Viator_03_probability.png
+ai/evaluation/tiled_diagnostics/Viator_04_prediction.png
+ai/evaluation/tiled_diagnostics/Viator_04_probability.png
+ai/evaluation/tiled_diagnostics/Viator_05_prediction.png
+ai/evaluation/tiled_diagnostics/Viator_05_probability.png
+ai/evaluation/tiled_diagnostics/Viator_06_prediction.png
+ai/evaluation/tiled_diagnostics/Viator_06_probability.png
+ai/evaluation/tiled_diagnostics/Viator_07_prediction.png
+ai/evaluation/tiled_diagnostics/Viator_07_probability.png
+ai/evaluation/tiled_diagnostics/Viator_08_prediction.png
+ai/evaluation/tiled_diagnostics/Viator_08_probability.png
+ai/evaluation/tiled_diagnostics/Viator_09_prediction.png
+ai/evaluation/tiled_diagnostics/Viator_09_probability.png
+ai/evaluation/tiled_diagnostics/Viator_10_prediction.png
+ai/evaluation/tiled_diagnostics/Viator_10_probability.png
+ai/evaluation/tiled_diagnostics/Viator_11_prediction.png
+ai/evaluation/tiled_diagnostics/Viator_11_probability.png
+ai/evaluation/tiled_diagnostics/WH_Gilbert_01_prediction.png
+ai/evaluation/tiled_diagnostics/WH_Gilbert_01_probability.png
+ai/evaluation/tiled_diagnostics/WH_Gilbert_02_prediction.png
+ai/evaluation/tiled_diagnostics/WH_Gilbert_02_probability.png
+ai/evaluation/tiled_diagnostics/WH_Gilbert_03_prediction.png
+ai/evaluation/tiled_diagnostics/WH_Gilbert_03_probability.png
+ai/evaluation/tiled_diagnostics/WH_Gilbert_04_prediction.png
+ai/evaluation/tiled_diagnostics/WH_Gilbert_04_probability.png
+ai/evaluation/tiled_diagnostics/WH_Gilbert_05_prediction.png
+ai/evaluation/tiled_diagnostics/WH_Gilbert_05_probability.png
+ai/evaluation/tiled_diagnostics/WH_Gilbert_06_prediction.png
+ai/evaluation/tiled_diagnostics/WH_Gilbert_06_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_01_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_01_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_02_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_02_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_03_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_03_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_04_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_04_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_05_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_05_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_06_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_06_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_07_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_07_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_08_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_08_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_09_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_09_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_10_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_10_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_11_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_11_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_12_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_12_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_13_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_13_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_14_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_14_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_15_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_15_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_16_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_16_probability.png
+ai/evaluation/tiled_diagnostics/WP_Thew_17_prediction.png
+ai/evaluation/tiled_diagnostics/WP_Thew_17_probability.png
+ai/evaluation/validate_hard_negative.py
+ai/models/__pycache__/unet.cpython-314.pyc
+ai/models/unet.py
+ai/preprocessing/preprocess_dataset.py
+ai/training/checkpoints/best_unet.pt
+ai/training/checkpoints/hard_negative_best_unet.pt
+ai/training/checkpoints/patch_3epoch_unet.pt
+ai/training/losses.py
+ai/training/__pycache__/losses.cpython-314.pyc
+ai/training/__pycache__/train.cpython-314.pyc
+ai/training/__pycache__/train_hard_negative.cpython-314.pyc
+ai/training/train_before_hard_negative.py
+ai/training/train_fullimage_backup.py
+ai/training/train_hard_negative.py
+ai/training/train.py
+
+===== DASHBOARD / DEMO REFERENCES =====
+src/components/sonar/SonarLaboratory.tsx:27:export default function SonarLaboratory() {
+src/components/sonar/SonarLaboratory.tsx:421:              title="AI Detection"
+src/App.tsx:32:import SonarLaboratory from "./components/sonar/SonarLaboratory";
+src/App.tsx:35:type Detection = {
+src/App.tsx:43:const demoDetections: Detection[] = [
+src/App.tsx:76:  const [selectedDetection, setSelectedDetection] =
+src/App.tsx:77:    useState<Detection | null>(null);
+src/App.tsx:86:  const [activePage, setActivePage] = useState("Dashboard");
+src/App.tsx:87:  const [demoMode, setDemoMode] = useState(false);
+src/App.tsx:94:      if (demoMode) {
+src/App.tsx:100:  }, [demoMode]);
+src/App.tsx:122:              <p>& Anomaly Detection</p>
+src/App.tsx:130:            label="Dashboard"
+src/App.tsx:131:            active={activePage === "Dashboard"}
+src/App.tsx:133:            onClick={() => setActivePage("Dashboard")}
+src/App.tsx:203:              label="Detection"
+src/App.tsx:204:              onClick={() => setActivePage("Detection")}
+src/App.tsx:266:            <h2>MISSION CONTROL DASHBOARD</h2>
+src/App.tsx:272:              className={`mode-toggle ${demoMode ? "demo" : "real"}`}
+src/App.tsx:273:              onClick={() => setDemoMode(!demoMode)}
+src/App.tsx:274:              title={demoMode ? "Switch to real mode" : "Switch to demo mode"}
+src/App.tsx:277:              <span>{demoMode ? "DEMO MODE" : "REAL MODE"}</span>
+src/App.tsx:297:        {activePage === "Dashboard" ? (
+src/App.tsx:298:          <Dashboard
+src/App.tsx:299:            detections={demoMode ? demoDetections : []}
+src/App.tsx:300:            demoMode={demoMode}
+src/App.tsx:301:            onDetection={setSelectedDetection}
+src/App.tsx:308:          <SonarLaboratory />
+src/App.tsx:316:      {selectedDetection && (
+src/App.tsx:319:          onClick={() => setSelectedDetection(null)}
+src/App.tsx:321:          <div className="detection-modal" onClick={(e) => e.stopPropagation()}>
+src/App.tsx:324:              onClick={() => setSelectedDetection(null)}
+src/App.tsx:329:            <div className={`modal-detection-icon ${selectedDetection.className}`}>
+src/App.tsx:333:            <span className="modal-label">AI DETECTION RESULT</span>
+src/App.tsx:335:            <h2>{selectedDetection.type}</h2>
+src/App.tsx:339:              <strong>{selectedDetection.confidence}%</strong>
+src/App.tsx:345:                  width: `${selectedDetection.confidence}%`,
+src/App.tsx:353:                <strong>{selectedDetection.time}</strong>
+src/App.tsx:358:                <strong>{selectedDetection.scan}</strong>
+src/App.tsx:369:                  {selectedDetection.confidence >= 80
+src/App.tsx:462:function Dashboard({
+src/App.tsx:463:  detections,
+src/App.tsx:464:  demoMode,
+src/App.tsx:465:  onDetection,
+src/App.tsx:469:  detections: Detection[];
+src/App.tsx:470:  demoMode: boolean;
+src/App.tsx:471:  onDetection: (d: Detection) => void;
+src/App.tsx:495:    <div className="dashboard">
+src/App.tsx:500:          value={demoMode ? "128" : "—"}
+src/App.tsx:501:          text={demoMode ? "Simulated mission scans" : "No live mission data"}
+src/App.tsx:505:          label="DETECTIONS"
+src/App.tsx:506:          value={demoMode ? String(detections.length) : "—"}
+src/App.tsx:507:          text={demoMode ? "Simulated AI findings" : "Model not trained"}
+src/App.tsx:513:          value={demoMode ? "3" : "—"}
+src/App.tsx:514:          text={demoMode ? "≥ 80% confidence" : "No AI results"}
+src/App.tsx:520:          value={demoMode ? "1" : "—"}
+src/App.tsx:521:          text={demoMode ? "Simulated anomaly finding" : "No AI results"}
+src/App.tsx:527:          value={demoMode ? "2.45" : "—"}
+src/App.tsx:528:          unit={demoMode ? "km²" : undefined}
+src/App.tsx:529:          text={demoMode ? "Simulated survey area" : "Navigation data required"}
+src/App.tsx:535:          value={demoMode ? "01:42" : "—"}
+src/App.tsx:536:          text={demoMode ? "Simulated mission duration" : "No active mission"}
+src/App.tsx:544:          detections={detections}
+src/App.tsx:545:          onDetection={onDetection}
+src/App.tsx:547:        <DetectionSummary demoMode={demoMode} detections={detections} />
+src/App.tsx:551:        <GISMap demoMode={demoMode} />
+src/App.tsx:552:        <MissionTimeline demoMode={demoMode} />
+src/App.tsx:553:        <SystemStatus demoMode={demoMode} />
+src/App.tsx:567:        <FooterItem label="TIME (IST)" value={demoMode ? formatDemoTime(demoTime) : formatTime(currentTime)} icon={<Clock3 />} />
+src/App.tsx:570:          value={demoMode ? "SIMULATED" : "Not available"}
+src/App.tsx:573:        <FooterItem label="SEA STATE" value={demoMode ? "CALM (SIM)" : "Not available"} icon={<Waves />} />
+src/App.tsx:574:        <FooterItem label="VESSEL" value={demoMode ? "DEMO AUV" : "Not configured"} icon={<Anchor />} />
+src/App.tsx:701:  detections,
+src/App.tsx:702:  onDetection,
+src/App.tsx:704:  detections: Detection[];
+src/App.tsx:705:  onDetection: (d: Detection) => void;
+src/App.tsx:715:      {detections.length === 0 ? (
+src/App.tsx:718:          <strong>No AI detections yet</strong>
+src/App.tsx:721:            before detection results are displayed here.
+src/App.tsx:726:          {detections.map((detection) => (
+src/App.tsx:729:              key={detection.scan}
+src/App.tsx:730:              onClick={() => onDetection(detection)}
+src/App.tsx:732:              <div className={`finding-image ${detection.className}`}>
+src/App.tsx:738:                  <strong>{detection.type}</strong>
+src/App.tsx:739:                  <span className={`badge ${detection.className}`}>
+src/App.tsx:740:                    {detection.confidence >= 80 ? "HIGH" : "MEDIUM"}
+src/App.tsx:745:                  Confidence: {detection.confidence}%
+src/App.tsx:750:                <strong>{detection.time}</strong>
+src/App.tsx:751:                <small>{detection.scan}</small>
+src/App.tsx:761:function DetectionSummary({
+src/App.tsx:762:  demoMode,
+src/App.tsx:763:  detections,
+src/App.tsx:765:  demoMode: boolean;
+src/App.tsx:766:  detections: Detection[];
+src/App.tsx:768:  const high = detections.filter((d) => d.confidence >= 80).length;
+src/App.tsx:769:  const medium = detections.filter((d) => d.confidence < 80).length;
+src/App.tsx:775:        title="DETECTION SUMMARY"
+src/App.tsx:776:        action={demoMode ? "SIMULATED" : "NO RESULTS"}
+src/App.tsx:779:      {demoMode ? (
+src/App.tsx:782:            <strong>{detections.length}</strong>
+src/App.tsx:813:            Detection statistics will appear after the trained model
+src/App.tsx:822:function GISMap({ demoMode }: { demoMode: boolean }) {
+src/App.tsx:828:        action={demoMode ? "SIMULATED LOCATION" : "LOCATION UNAVAILABLE"}
+src/App.tsx:835:        {demoMode ? (
+src/App.tsx:877:            <strong>No georeferenced detections</strong>
+src/App.tsx:880:              detections on the GIS map.
+src/App.tsx:894:          <small>SELECTED DETECTION</small>
+src/App.tsx:903:function MissionTimeline({ demoMode }: { demoMode: boolean }) {
+src/App.tsx:907:    ["10:42", "AI detection", "Ghost Net detected — 92.1%"],
+src/App.tsx:908:    ["10:45", "AI detection", "Shipwreck detected — 88.7%"],
+src/App.tsx:909:    ["10:49", "AI detection", "Pipe detected — 81.3%"],
+src/App.tsx:918:        action={demoMode ? "SIMULATED MISSION" : "NO ACTIVE MISSION"}
+src/App.tsx:921:      {demoMode ? (
+src/App.tsx:957:function SystemStatus({ demoMode }: { demoMode: boolean }) {
+src/App.tsx:974:        value={demoMode ? "SIMULATED" : "PYTORCH PENDING"}
+src/App.tsx:980:        value={demoMode ? "SIMULATED" : "DATA REQUIRED"}
+src/App.tsx:995:          <b>{demoMode ? "DEMO ACTIVE" : "INACTIVE"}</b>
+src/App.tsx:1071:        "AI detection results",
+src/App.tsx:1102:    "Detection": {
+src/App.tsx:1118:        "Associate sonar detections with survey navigation data.",
+src/App.tsx:1123:        "Associate detection with position",
+src/App.tsx:1144:        "Display georeferenced sonar detections and survey tracks.",
+src/App.tsx:1148:        "Georeference detections",
+src/App.tsx:1149:        "Plot detection coordinates",
+src/App.tsx:1162:        "AI detection results",
+
+===== EXISTING API REFERENCES =====

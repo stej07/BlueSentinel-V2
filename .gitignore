@@ -1,54 +1,48 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Python
+node_modules/
+dist/
 .venv/
 __pycache__/
-*.py[cod]
+*.pyc
+*.pyo
+*.log
+.env
+.env.*
+!.env.example
+
+# Python caches/tests
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# AI4Shipwrecks / large datasets
+# Large/generated AI data
 data/raw/
-data/preprocessed/
-data/augmented/
+data/hard_negatives/
+ai/evaluation/
+ai/training/*/outputs/
 
-# Generated dataset splits
-data/splits/
-
-# Training outputs / model checkpoints
-ai/training/runs/
-ai/training/checkpoints/
-ai/evaluation/results/
-ai/inference/results/
-
-# Model files
+# Keep trained checkpoint out of Git if large
 *.pt
 *.pth
 *.onnx
-*.safetensors
 
-# Python-generated temporary files
-*.tmp
-*.cache
+# Local backups
+*.backup
+*.bak
+*.before_*
+*_backup.*
+MarineDetectionPanel.tsx.backup
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
+
+# Generated project data
+ data/augmented/
+data/preprocessed/
+data/splits/
+
+# Generated project data
+data/augmented/
+data/preprocessed/
+data/splits/

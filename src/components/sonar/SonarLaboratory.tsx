@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import UnifiedAIAnalysis from "./UnifiedAIAnalysis";
 import {
   Upload,
   Image as ImageIcon,
@@ -22,6 +23,7 @@ type ProcessedImage = {
 type AugmentedImage = {
   title: string;
   url: string;
+
 };
 
 export default function SonarLaboratory() {
@@ -33,6 +35,101 @@ export default function SonarLaboratory() {
   const [processed, setProcessed] = useState<ProcessedImage[]>([]);
   const [augmented, setAugmented] = useState<AugmentedImage[]>([]);
   const [activeStage, setActiveStage] = useState("Upload");
+  const [cnnSource, setCnnSource] = useState<{
+    title: string;
+    url: string;
+  } | null>(null);
+  const [cnnRunning, setCnnRunning] = useState(false);
+  const [cnnResult, setCnnResult] = useState<{
+    summary: {
+      foreground_pixels: number;
+      foreground_percent: number;
+      max_confidence: number;
+    };
+    model: string;
+    note: string;
+    threshold: number;
+    outputs?: {
+      probability_map: string;
+      mask: string;
+      overlay: string;
+    };
+  } | null>(null);
+  const [cnnError, setCnnError] = useState("");
+  const [aiAnalysisComplete, setAiAnalysisComplete] = useState(false);
+
+  const runCNN = async () => {
+    if (!cnnSource) {
+      alert("Select an image for CNN inference first.");
+      return;
+    }
+
+    setCnnRunning(true);
+    setCnnError("");
+    setCnnResult(null);
+    setActiveStage("CNN Ready");
+
+    try {
+      const response = await fetch(cnnSource.url);
+      const blob = await response.blob();
+
+      const extension =
+        blob.type === "image/png"
+          ? "png"
+          : blob.type === "image/webp"
+            ? "webp"
+            : "jpg";
+
+      const file = new File(
+        [blob],
+        `${cnnSource.title.replace(/[^a-z0-9]+/gi, "_").toLowerCase()}.${extension}`,
+        { type: blob.type || "image/jpeg" }
+      );
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const apiResponse = await fetch("http://127.0.0.1:8000/infer", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!apiResponse.ok) {
+        throw new Error("CNN API returned an error.");
+      }
+
+      const result = await apiResponse.json();
+      setCnnResult(result);
+    } catch (error) {
+      setCnnError(
+        error instanceof Error
+          ? error.message
+          : "Unable to connect to the CNN engine."
+      );
+    } finally {
+      setCnnRunning(false);
+    }
+  };
+
+
+  useEffect(() => {
+    const handleAIComplete = () => {
+      setAiAnalysisComplete(true);
+      setActiveStage("AI Detection");
+    };
+
+    window.addEventListener(
+      "bluesentinel-ai-complete",
+      handleAIComplete
+    );
+
+    return () => {
+      window.removeEventListener(
+        "bluesentinel-ai-complete",
+        handleAIComplete
+      );
+    };
+  }, []);
 
   const handleFile = (file: File) => {
     if (!file.type.startsWith("image/")) {
@@ -40,10 +137,19 @@ export default function SonarLaboratory() {
       return;
     }
 
+    const url = URL.createObjectURL(file);
+
     setFileName(file.name);
-    setOriginal(URL.createObjectURL(file));
+    setOriginal(url);
     setProcessed([]);
     setAugmented([]);
+    setCnnSource({
+      title: "Original Sonar Image",
+      url,
+    });
+    setCnnResult(null);
+    setCnnError("");
+    setAiAnalysisComplete(false);
     setActiveStage("Upload");
   };
 
@@ -196,6 +302,9 @@ export default function SonarLaboratory() {
           if (file) handleFile(file);
         }}
       />
+
+
+      
 
       <section className="lab-grid">
         <div className="lab-main">
@@ -367,6 +476,21 @@ export default function SonarLaboratory() {
                   <div className="augmented-card" key={item.title}>
                     <div className="augmented-image">
                       <img src={item.url} alt={item.title} />
+                  <button
+                    type="button"
+                    onClick={() => setCnnSource({
+                      title: item.title,
+                      url: item.url,
+                    })}
+                    style={{
+                      marginTop: "8px",
+                      width: "100%",
+                    }}
+                  >
+                    {cnnSource?.url === item.url
+                      ? "✓ SELECTED FOR CNN"
+                      : "USE FOR CNN"}
+                  </button>
                     </div>
 
                     <div>
@@ -378,6 +502,155 @@ export default function SonarLaboratory() {
               </div>
             )}
           </section>
+
+<section className="lab-panel" style={{ marginBottom: "20px" }}>
+        <PanelHeading
+          icon={<ScanLine />}
+          title="04 / REAL CNN INFERENCE"
+          description="Run the trained BlueSentinel V2 U-Net on the uploaded sonar image"
+        />
+
+        <div style={{
+          display: "flex",
+          gap: "12px",
+          alignItems: "center",
+          flexWrap: "wrap"
+        }}>
+          <button
+            className="upload-zone"
+            onClick={runCNN}
+            disabled={cnnRunning || !original}
+            style={{
+              minHeight: "90px",
+              flex: "1",
+              cursor: cnnRunning || !original ? "not-allowed" : "pointer",
+              opacity: cnnRunning || !original ? 0.6 : 1
+            }}
+          >
+            {cnnRunning ? (
+              <>
+                <LoaderCircle className="animate-spin" />
+                <strong>Running U-Net CNN...</strong>
+                <span>Processing sonar tiles on CPU</span>
+              </>
+            ) : (
+              <>
+                <ScanLine />
+                <strong>Run Trained CNN</strong>
+                <span>REAL MODEL — BlueSentinel CNN U-Net v1</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {cnnError && (
+          <div style={{ marginTop: "14px" }}>
+            <strong>CNN ERROR</strong>
+            <p>{cnnError}</p>
+          </div>
+        )}
+
+        {cnnResult && (
+          <div style={{
+            marginTop: "18px",
+            display: "grid",
+            gap: "10px"
+          }}>
+            <strong>REAL CNN RESULT</strong>
+
+            <div>
+              Detections / foreground pixels:{" "}
+              {cnnResult.summary.foreground_pixels.toLocaleString()}
+            </div>
+
+            <div>
+              Foreground area:{" "}
+              {cnnResult.summary.foreground_percent.toFixed(2)}%
+            </div>
+
+            <div>
+              Maximum confidence:{" "}
+              {cnnResult.summary.max_confidence.toFixed(1)}%
+            </div>
+
+            <small>{cnnResult.note}</small>
+
+            {cnnResult.outputs?.overlay && (
+              <div
+                style={{
+                  marginTop: "18px",
+                  display: "grid",
+                  gap: "14px",
+                }}
+              >
+                <strong>REAL CNN SEGMENTATION OUTPUT</strong>
+
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                    gap: "14px",
+                  }}
+                >
+                  <div>
+                    <small>MODEL OVERLAY</small>
+                    <img
+                      src={cnnResult.outputs.overlay}
+                      alt="Real CNN segmentation overlay"
+                      style={{
+                        width: "100%",
+                        display: "block",
+                        marginTop: "6px",
+                        borderRadius: "8px",
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <small>PROBABILITY MAP</small>
+                    <img
+                      src={cnnResult.outputs.probability_map}
+                      alt="Real CNN probability map"
+                      style={{
+                        width: "100%",
+                        display: "block",
+                        marginTop: "6px",
+                        borderRadius: "8px",
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <small>BINARY PREDICTION MASK</small>
+                  <img
+                    src={cnnResult.outputs.mask}
+                    alt="Real CNN binary prediction mask"
+                    style={{
+                      width: "100%",
+                      display: "block",
+                      marginTop: "6px",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </div>
+
+                <small>
+                  Threshold used: {(cnnResult.threshold * 100).toFixed(0)}%
+                </small>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
+          <div style={{ marginTop: "20px" }}>
+            <UnifiedAIAnalysis
+              imageUrl={original}
+              fileName={fileName}
+            />
+          </div>
+
         </div>
 
         <aside className="lab-side">
@@ -411,22 +684,22 @@ export default function SonarLaboratory() {
 
             <MethodologyStatus
               number="04"
-              title="CNN Training"
-              status="Next Stage"
-              active={false}
+              title="CNN AI Analysis"
+              status={aiAnalysisComplete ? "Complete" : "Ready"}
+              active={aiAnalysisComplete}
             />
 
             <MethodologyStatus
               number="05"
               title="AI Detection"
-              status="Upcoming"
-              active={false}
+              status={aiAnalysisComplete ? "Complete" : "Ready"}
+              active={aiAnalysisComplete}
             />
 
             <MethodologyStatus
               number="06"
               title="Geolocation"
-              status="Upcoming"
+              status={aiAnalysisComplete ? "Next Stage" : "Upcoming"}
               active={false}
             />
           </section>
@@ -454,6 +727,9 @@ export default function SonarLaboratory() {
           </section>
         </aside>
       </section>
+
+      
+
     </div>
   );
 }
