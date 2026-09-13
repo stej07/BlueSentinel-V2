@@ -6,6 +6,7 @@ import os
 import tempfile
 
 from ai.inference.multiclass_inference import MarineAnomalyInference
+from ai.inference.ghost_mine_inference import GhostMineInference
 
 app = FastAPI(
     title="BlueSentinel Multi-Class AI API",
@@ -21,8 +22,10 @@ app.add_middleware(
 )
 
 CHECKPOINT = "ai/training/bluesentinel_multiclass_v1/best_multiclass_unet.pt"
+SPECIALIST_CHECKPOINT = "ai/training/ghost_mine_fresh/best_ghost_mine.pt"
 
 _engine = None
+_specialist_engine = None
 
 
 def get_engine():
@@ -38,6 +41,21 @@ def get_engine():
         _engine = MarineAnomalyInference(CHECKPOINT)
 
     return _engine
+
+
+def get_specialist_engine():
+    global _specialist_engine
+
+    if _specialist_engine is None:
+        if not os.path.exists(SPECIALIST_CHECKPOINT):
+            raise HTTPException(
+                status_code=503,
+                detail="Ghost/Mine specialist checkpoint is not available yet.",
+            )
+
+        _specialist_engine = GhostMineInference(SPECIALIST_CHECKPOINT)
+
+    return _specialist_engine
 
 
 @app.get("/")
@@ -64,6 +82,9 @@ def health():
         ],
         "checkpoint": CHECKPOINT,
         "checkpoint_available": available,
+        "specialist_model": "Ghost/Mine Specialist U-Net",
+        "specialist_checkpoint": SPECIALIST_CHECKPOINT,
+        "specialist_checkpoint_available": os.path.exists(SPECIALIST_CHECKPOINT),
     }
 
 
@@ -104,11 +125,23 @@ async def infer(file: UploadFile = File(...)):
             temp_path = temp.name
 
         engine = get_engine()
+        specialist = get_specialist_engine()
+
         result = engine.predict(temp_path)
+        specialist_result = specialist.predict(temp_path)
+
+        primary_detections = [
+            d for d in result["detections"]
+            if d.get("class_id") in (1, 2)
+        ]
+
+        specialist_detections = specialist_result["detections"]
+
+        combined = primary_detections + specialist_detections
 
         return {
             "status": "success",
-            "model": "BlueSentinel Multi-Class U-Net",
+            "model": "BlueSentinel Multi-Class U-Net + Ghost/Mine Specialist U-Net",
             "classes": [
                 "Submarine Pipeline",
                 "Shipwreck",
@@ -119,7 +152,11 @@ async def infer(file: UploadFile = File(...)):
                 "image": file.filename,
                 "image_size": result["image_size"],
                 "input_size": result["input_size"],
-                "detections": result["detections"],
+                "detections": combined,
+                "models": [
+                    "BlueSentinel Multi-Class U-Net",
+                    "Ghost/Mine Specialist U-Net",
+                ],
             },
         }
 
