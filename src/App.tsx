@@ -276,6 +276,7 @@ function App() {
             detections={demoMode ? demoDetections : []}
             demoMode={demoMode}
             onDetection={setSelectedDetection}
+            onNavigate={setActivePage}
             currentTime={currentTime}
             demoTime={demoTime}
           />
@@ -440,12 +441,15 @@ function Dashboard({
   detections,
   onDetection,
   currentTime,
+  onNavigate,
 }: {
+
   detections: Detection[];
   demoMode?: boolean;
   onDetection: (d: Detection) => void;
   currentTime: Date;
   demoTime?: number;
+  onNavigate: (page: string) => void;
 }) {
   const formatDate = currentTime.toLocaleDateString("en-IN", {
     day: "2-digit",
@@ -477,13 +481,7 @@ function Dashboard({
           <div className="hero-actions">
             <button
               className="hero-primary"
-              onClick={() =>
-                window.dispatchEvent(
-                  new CustomEvent("navigate-page", {
-                    detail: "Upload Sonar",
-                  }),
-                )
-              }
+              onClick={() => onNavigate("Upload Sonar")}
             >
               <Waves size={18} />
               Analyze Sonar
@@ -659,11 +657,7 @@ function Dashboard({
                 <p>Upload an image to generate real CNN/U-Net detection results.</p>
               </div>
               <button
-                onClick={() =>
-                  window.dispatchEvent(
-                    new CustomEvent("navigate-page", { detail: "Upload Sonar" }),
-                  )
-                }
+                onClick={() => onNavigate("Upload Sonar")}
               >
                 Start Analysis <ChevronRight size={15} />
               </button>
