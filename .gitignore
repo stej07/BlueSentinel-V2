@@ -61,3 +61,5 @@ data/demo_mission/
 *.current_backup
 *.broken_backup
 *.step1_backup
+
+ai/training/bluesentinel_cnn_v1/dataset/
