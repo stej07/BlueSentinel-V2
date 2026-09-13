@@ -31,6 +31,7 @@ export default function SonarLaboratory() {
 
   const [original, setOriginal] = useState<string | null>(null);
   const [fileName, setFileName] = useState("");
+  const [sonarFile, setSonarFile] = useState<File | null>(null);
   const [processing, setProcessing] = useState(false);
   const [processed, setProcessed] = useState<ProcessedImage[]>([]);
   const [augmented, setAugmented] = useState<AugmentedImage[]>([]);
@@ -73,6 +74,7 @@ export default function SonarLaboratory() {
     const url = URL.createObjectURL(file);
 
     setFileName(file.name);
+    setSonarFile(file);
     setOriginal(url);
     setProcessed([]);
     setAugmented([]);
@@ -87,7 +89,7 @@ export default function SonarLaboratory() {
   };
 
   const runCNN = async () => {
-    if (!cnnSource?.url && !original) {
+    if (!sonarFile) {
       alert("Upload a sonar image first.");
       return;
     }
@@ -97,27 +99,11 @@ export default function SonarLaboratory() {
     setActiveStage("AI Detection");
 
     try {
-      const sourceUrl = cnnSource?.url || original;
-
-      if (!sourceUrl) {
-        throw new Error("No sonar image available.");
-      }
-
-      const response = await fetch(sourceUrl);
-
-      if (!response.ok) {
-        throw new Error("Unable to read the selected sonar image.");
-      }
-
-      const blob = await response.blob();
-
       const formData = new FormData();
-
       formData.append(
         "file",
-        new File([blob], fileName || "sonar-image.png", {
-          type: blob.type || "image/png",
-        })
+        sonarFile,
+        sonarFile.name || fileName || "sonar-image.png"
       );
 
       const apiResponse = await fetch(
