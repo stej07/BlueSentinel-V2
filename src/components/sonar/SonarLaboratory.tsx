@@ -665,7 +665,7 @@ export default function SonarLaboratory() {
               </div>
 
               <div className="ai-metric">
-                <span>ANOMALY CLASSES</span>
+                <span>SUPPORTED CLASSES</span>
                 <strong>4</strong>
               </div>
 
