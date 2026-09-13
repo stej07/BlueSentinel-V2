@@ -121,7 +121,7 @@ export default function SonarLaboratory() {
       );
 
       const apiResponse = await fetch(
-        "http://127.0.0.1:8001/infer",
+        `${import.meta.env.VITE_API_URL || "http://127.0.0.1:8001"}/infer`,
         {
           method: "POST",
           body: formData,

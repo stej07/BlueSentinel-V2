@@ -138,7 +138,7 @@ export default function OperationsModules({ name }: { name: string }) {
             <Card title="METHOD" value="CNN + U-Net" text="Pixel-level segmentation" icon={<BrainCircuit size={17} />} />
             <Card title="REGION EXTRACTION" value="ACTIVE" text="Connected components" icon={<Target size={17} />} />
             <Card title="NOISE FILTER" value="100 px" text="Minimum region area" icon={<ShieldCheck size={17} />} />
-            <Card title="API" value="READY" text="127.0.0.1:8001" icon={<Activity size={17} />} />
+            <Card title="API" value="READY" text="Production API" icon={<Activity size={17} />} />
           </div>
           <div style={{ ...row, marginTop: 20 }}>
             <span>Upload an image in Sonar Laboratory to run live CNN inference.</span>
