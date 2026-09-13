@@ -46,3 +46,18 @@ data/splits/
 data/augmented/
 data/preprocessed/
 data/splits/
+.vercel
+
+# BlueSentinel local datasets and demo artifacts
+data/drishti_sss/
+data/drishti_masks/
+data/mask_previews/
+data/demo_mission/
+
+# Local UI recovery copies
+*.before_ui_upgrade
+*.before_ui_upgrade_2
+*.before_ui_upgrade_final
+*.current_backup
+*.broken_backup
+*.step1_backup

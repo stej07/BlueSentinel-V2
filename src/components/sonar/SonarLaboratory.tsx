@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import UnifiedAIAnalysis from "./UnifiedAIAnalysis";
+import { useRef, useState } from "react";
 import {
   Upload,
   Image as ImageIcon,
@@ -23,8 +22,9 @@ type ProcessedImage = {
 type AugmentedImage = {
   title: string;
   url: string;
-
 };
+
+
 
 export default function SonarLaboratory() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,101 +35,34 @@ export default function SonarLaboratory() {
   const [processed, setProcessed] = useState<ProcessedImage[]>([]);
   const [augmented, setAugmented] = useState<AugmentedImage[]>([]);
   const [activeStage, setActiveStage] = useState("Upload");
+
   const [cnnSource, setCnnSource] = useState<{
     title: string;
     url: string;
   } | null>(null);
+
   const [cnnRunning, setCnnRunning] = useState(false);
   const [cnnResult, setCnnResult] = useState<{
-    summary: {
-      foreground_pixels: number;
-      foreground_percent: number;
-      max_confidence: number;
-    };
     model: string;
-    note: string;
-    threshold: number;
-    outputs?: {
-      probability_map: string;
-      mask: string;
-      overlay: string;
-    };
+    detections: Array<{
+      class_id: number;
+      class_name: string;
+      confidence: number;
+      pixel_count: number;
+      bbox: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+      };
+    }>;
   } | null>(null);
   const [cnnError, setCnnError] = useState("");
   const [aiAnalysisComplete, setAiAnalysisComplete] = useState(false);
 
-  const runCNN = async () => {
-    if (!cnnSource) {
-      alert("Select an image for CNN inference first.");
-      return;
-    }
-
-    setCnnRunning(true);
-    setCnnError("");
-    setCnnResult(null);
-    setActiveStage("CNN Ready");
-
-    try {
-      const response = await fetch(cnnSource.url);
-      const blob = await response.blob();
-
-      const extension =
-        blob.type === "image/png"
-          ? "png"
-          : blob.type === "image/webp"
-            ? "webp"
-            : "jpg";
-
-      const file = new File(
-        [blob],
-        `${cnnSource.title.replace(/[^a-z0-9]+/gi, "_").toLowerCase()}.${extension}`,
-        { type: blob.type || "image/jpeg" }
-      );
-
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const apiResponse = await fetch("http://127.0.0.1:8000/infer", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!apiResponse.ok) {
-        throw new Error("CNN API returned an error.");
-      }
-
-      const result = await apiResponse.json();
-      setCnnResult(result);
-    } catch (error) {
-      setCnnError(
-        error instanceof Error
-          ? error.message
-          : "Unable to connect to the CNN engine."
-      );
-    } finally {
-      setCnnRunning(false);
-    }
+  const openFilePicker = () => {
+    inputRef.current?.click();
   };
-
-
-  useEffect(() => {
-    const handleAIComplete = () => {
-      setAiAnalysisComplete(true);
-      setActiveStage("AI Detection");
-    };
-
-    window.addEventListener(
-      "bluesentinel-ai-complete",
-      handleAIComplete
-    );
-
-    return () => {
-      window.removeEventListener(
-        "bluesentinel-ai-complete",
-        handleAIComplete
-      );
-    };
-  }, []);
 
   const handleFile = (file: File) => {
     if (!file.type.startsWith("image/")) {
@@ -153,8 +86,86 @@ export default function SonarLaboratory() {
     setActiveStage("Upload");
   };
 
-  const openFilePicker = () => {
-    inputRef.current?.click();
+  const runCNN = async () => {
+    if (!cnnSource?.url && !original) {
+      alert("Upload a sonar image first.");
+      return;
+    }
+
+    setCnnRunning(true);
+    setCnnError("");
+    setActiveStage("AI Detection");
+
+    try {
+      const sourceUrl = cnnSource?.url || original;
+
+      if (!sourceUrl) {
+        throw new Error("No sonar image available.");
+      }
+
+      const response = await fetch(sourceUrl);
+
+      if (!response.ok) {
+        throw new Error("Unable to read the selected sonar image.");
+      }
+
+      const blob = await response.blob();
+
+      const formData = new FormData();
+
+      formData.append(
+        "file",
+        new File([blob], fileName || "sonar-image.png", {
+          type: blob.type || "image/png",
+        })
+      );
+
+      const apiResponse = await fetch(
+        "http://127.0.0.1:8001/infer",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!apiResponse.ok) {
+        const errorText = await apiResponse.text();
+
+        throw new Error(
+          `AI inference service error ${apiResponse.status}: ${errorText}`
+        );
+      }
+
+      const result = await apiResponse.json();
+
+      if (result.status !== "success") {
+        throw new Error(
+          result.message ||
+            "The AI inference service did not return a successful result."
+        );
+      }
+
+      setCnnResult({
+        model:
+          result.model ||
+          "BlueSentinel Multi-Class U-Net",
+        detections: Array.isArray(result.result?.detections)
+          ? result.result.detections
+          : [],
+      });
+
+      setAiAnalysisComplete(true);
+    } catch (error) {
+      setCnnError(
+        error instanceof Error
+          ? error.message
+          : "Unable to connect to the BlueSentinel AI inference service."
+      );
+
+      setAiAnalysisComplete(false);
+    } finally {
+      setCnnRunning(false);
+    }
   };
 
   const runPreprocessing = async () => {
@@ -166,35 +177,34 @@ export default function SonarLaboratory() {
     setProcessing(true);
     setActiveStage("Preprocessing");
 
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await new Promise((resolve) =>
+      setTimeout(resolve, 700)
+    );
 
     const img = await loadImage(original);
 
-    const stages: ProcessedImage[] = [];
-
-    stages.push({
-      title: "Resized",
-      description: "Standardized sonar dimensions",
-      url: processImage(img, "resize"),
-    });
-
-    stages.push({
-      title: "Grayscale",
-      description: "Converted sonar intensity information",
-      url: processImage(img, "grayscale"),
-    });
-
-    stages.push({
-      title: "Denoised",
-      description: "Reduced high-frequency sonar noise",
-      url: processImage(img, "denoise"),
-    });
-
-    stages.push({
-      title: "Contrast Enhanced",
-      description: "Improved seabed and target visibility",
-      url: processImage(img, "contrast"),
-    });
+    const stages: ProcessedImage[] = [
+      {
+        title: "Resized",
+        description: "Standardized sonar dimensions",
+        url: processImage(img, "resize"),
+      },
+      {
+        title: "Grayscale",
+        description: "Converted sonar intensity information",
+        url: processImage(img, "grayscale"),
+      },
+      {
+        title: "Denoised",
+        description: "Reduced high-frequency sonar noise",
+        url: processImage(img, "denoise"),
+      },
+      {
+        title: "Contrast Enhanced",
+        description: "Improved seabed and target visibility",
+        url: processImage(img, "contrast"),
+      },
+    ];
 
     setProcessed(stages);
     setProcessing(false);
@@ -209,7 +219,9 @@ export default function SonarLaboratory() {
     setProcessing(true);
     setActiveStage("Augmentation");
 
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await new Promise((resolve) =>
+      setTimeout(resolve, 700)
+    );
 
     const img = await loadImage(original);
 
@@ -239,26 +251,28 @@ export default function SonarLaboratory() {
   return (
     <div className="sonar-lab-page">
       <div className="lab-header">
-        <div>
-          <div className="lab-title-row">
-            <div className="lab-title-icon">
-              <ScanLine />
-            </div>
+        <div className="lab-title-row">
+          <div className="lab-title-icon">
+            <ScanLine />
+          </div>
 
-            <div>
-              <span className="lab-eyebrow">SONAR LABORATORY</span>
-              <h1>Sonar Image Processing</h1>
-              <p>
-                Upload, preprocess and augment side-scan sonar imagery before
-                AI analysis.
-              </p>
-            </div>
+          <div>
+            <span className="lab-eyebrow">
+              SONAR LABORATORY
+            </span>
+
+            <h1>Sonar Image Processing</h1>
+
+            <p>
+              Upload, preprocess and augment side-scan sonar
+              imagery before AI analysis.
+            </p>
           </div>
         </div>
 
         <div className="lab-status">
           <span />
-          PROCESSING ENGINE READY
+          AI PROCESSING ENGINE READY
         </div>
       </div>
 
@@ -269,26 +283,32 @@ export default function SonarLaboratory() {
           active={activeStage === "Upload"}
           complete={!!original}
         />
+
         <div className="pipeline-line" />
+
         <PipelineStep
           number="02"
           title="Preprocessing"
           active={activeStage === "Preprocessing"}
           complete={processed.length > 0}
         />
+
         <div className="pipeline-line" />
+
         <PipelineStep
           number="03"
           title="Augmentation"
           active={activeStage === "Augmentation"}
           complete={augmented.length > 0}
         />
+
         <div className="pipeline-line" />
+
         <PipelineStep
           number="04"
-          title="CNN Ready"
-          active={false}
-          complete={false}
+          title="Anomaly Detection"
+          active={activeStage === "AI Detection"}
+          complete={aiAnalysisComplete}
         />
       </div>
 
@@ -299,15 +319,16 @@ export default function SonarLaboratory() {
         hidden
         onChange={(event) => {
           const file = event.target.files?.[0];
-          if (file) handleFile(file);
+
+          if (file) {
+            handleFile(file);
+          }
         }}
       />
 
-
-      
-
       <section className="lab-grid">
         <div className="lab-main">
+
           <section className="lab-panel upload-panel">
             <PanelHeading
               icon={<Upload />}
@@ -316,7 +337,10 @@ export default function SonarLaboratory() {
             />
 
             {!original ? (
-              <button className="upload-zone" onClick={openFilePicker}>
+              <button
+                className="upload-zone"
+                onClick={openFilePicker}
+              >
                 <div className="upload-icon">
                   <Upload />
                 </div>
@@ -336,7 +360,9 @@ export default function SonarLaboratory() {
                 <div className="image-card-header">
                   <div>
                     <FileImage size={17} />
-                    <strong>Original Sonar Image</strong>
+                    <strong>
+                      Original Sonar Image
+                    </strong>
                   </div>
 
                   <button onClick={openFilePicker}>
@@ -345,7 +371,11 @@ export default function SonarLaboratory() {
                 </div>
 
                 <div className="sonar-image-wrapper">
-                  <img src={original} alt="Original sonar" />
+                  <img
+                    src={original}
+                    alt="Original sonar"
+                  />
+
                   <div className="image-overlay">
                     ORIGINAL
                   </div>
@@ -357,9 +387,7 @@ export default function SonarLaboratory() {
                     {fileName}
                   </span>
 
-                  <span>
-                    INPUT
-                  </span>
+                  <span>INPUT</span>
                 </div>
               </div>
             )}
@@ -407,7 +435,8 @@ export default function SonarLaboratory() {
               onClick={runPreprocessing}
               disabled={!original || processing}
             >
-              {processing && activeStage === "Preprocessing" ? (
+              {processing &&
+              activeStage === "Preprocessing" ? (
                 <LoaderCircle className="spin" />
               ) : (
                 <ScanLine />
@@ -427,9 +456,15 @@ export default function SonarLaboratory() {
 
               <div className="processed-grid">
                 {processed.map((item) => (
-                  <div className="processed-card" key={item.title}>
+                  <div
+                    className="processed-card"
+                    key={item.title}
+                  >
                     <div className="processed-image">
-                      <img src={item.url} alt={item.title} />
+                      <img
+                        src={item.url}
+                        alt={item.title}
+                      />
                     </div>
 
                     <div className="processed-info">
@@ -450,10 +485,25 @@ export default function SonarLaboratory() {
             />
 
             <div className="augmentation-methods">
-              <MethodChip icon={<FlipHorizontal />} text="Horizontal Flip" />
-              <MethodChip icon={<RotateCw />} text="Rotation" />
-              <MethodChip icon={<SunMedium />} text="Brightness" />
-              <MethodChip icon={<Contrast />} text="Contrast" />
+              <MethodChip
+                icon={<FlipHorizontal />}
+                text="Horizontal Flip"
+              />
+
+              <MethodChip
+                icon={<RotateCw />}
+                text="Rotation"
+              />
+
+              <MethodChip
+                icon={<SunMedium />}
+                text="Brightness"
+              />
+
+              <MethodChip
+                icon={<Contrast />}
+                text="Contrast"
+              />
             </div>
 
             <button
@@ -461,7 +511,8 @@ export default function SonarLaboratory() {
               onClick={runAugmentation}
               disabled={!original || processing}
             >
-              {processing && activeStage === "Augmentation" ? (
+              {processing &&
+              activeStage === "Augmentation" ? (
                 <LoaderCircle className="spin" />
               ) : (
                 <WandSparkles />
@@ -473,29 +524,40 @@ export default function SonarLaboratory() {
             {augmented.length > 0 && (
               <div className="augmented-grid">
                 {augmented.map((item) => (
-                  <div className="augmented-card" key={item.title}>
-                    <div className="augmented-image">
-                      <img src={item.url} alt={item.title} />
-                  <button
-                    type="button"
-                    onClick={() => setCnnSource({
-                      title: item.title,
-                      url: item.url,
-                    })}
-                    style={{
-                      marginTop: "8px",
-                      width: "100%",
-                    }}
+                  <div
+                    className="augmented-card"
+                    key={item.title}
                   >
-                    {cnnSource?.url === item.url
-                      ? "✓ SELECTED FOR CNN"
-                      : "USE FOR CNN"}
-                  </button>
+                    <div className="augmented-image">
+                      <img
+                        src={item.url}
+                        alt={item.title}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCnnSource({
+                            title: item.title,
+                            url: item.url,
+                          })
+                        }
+                        style={{
+                          marginTop: "8px",
+                          width: "100%",
+                        }}
+                      >
+                        {cnnSource?.url === item.url
+                          ? "✓ SELECTED FOR AI"
+                          : "USE FOR AI"}
+                      </button>
                     </div>
 
                     <div>
                       <strong>{item.title}</strong>
-                      <span>Training variation</span>
+                      <span>
+                        Training variation
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -503,154 +565,236 @@ export default function SonarLaboratory() {
             )}
           </section>
 
-<section className="lab-panel" style={{ marginBottom: "20px" }}>
-        <PanelHeading
-          icon={<ScanLine />}
-          title="04 / REAL CNN INFERENCE"
-          description="Run the trained BlueSentinel V2 U-Net on the uploaded sonar image"
-        />
-
-        <div style={{
-          display: "flex",
-          gap: "12px",
-          alignItems: "center",
-          flexWrap: "wrap"
-        }}>
-          <button
-            className="upload-zone"
-            onClick={runCNN}
-            disabled={cnnRunning || !original}
-            style={{
-              minHeight: "90px",
-              flex: "1",
-              cursor: cnnRunning || !original ? "not-allowed" : "pointer",
-              opacity: cnnRunning || !original ? 0.6 : 1
-            }}
+          <section
+            className="lab-panel"
+            style={{ marginBottom: "20px" }}
           >
-            {cnnRunning ? (
-              <>
-                <LoaderCircle className="animate-spin" />
-                <strong>Running U-Net CNN...</strong>
-                <span>Processing sonar tiles on CPU</span>
-              </>
-            ) : (
-              <>
-                <ScanLine />
-                <strong>Run Trained CNN</strong>
-                <span>REAL MODEL — BlueSentinel CNN U-Net v1</span>
-              </>
-            )}
-          </button>
-        </div>
+            <PanelHeading
+              icon={<ScanLine />}
+              title="05 / AI ANOMALY DETECTION"
+              description="Run the trained BlueSentinel multi-class U-Net on the selected sonar image"
+            />
 
-        {cnnError && (
-          <div style={{ marginTop: "14px" }}>
-            <strong>CNN ERROR</strong>
-            <p>{cnnError}</p>
-          </div>
-        )}
-
-        {cnnResult && (
-          <div style={{
-            marginTop: "18px",
-            display: "grid",
-            gap: "10px"
-          }}>
-            <strong>REAL CNN RESULT</strong>
-
-            <div>
-              Detections / foreground pixels:{" "}
-              {cnnResult.summary.foreground_pixels.toLocaleString()}
-            </div>
-
-            <div>
-              Foreground area:{" "}
-              {cnnResult.summary.foreground_percent.toFixed(2)}%
-            </div>
-
-            <div>
-              Maximum confidence:{" "}
-              {cnnResult.summary.max_confidence.toFixed(1)}%
-            </div>
-
-            <small>{cnnResult.note}</small>
-
-            {cnnResult.outputs?.overlay && (
-              <div
-                style={{
-                  marginTop: "18px",
-                  display: "grid",
-                  gap: "14px",
-                }}
-              >
-                <strong>REAL CNN SEGMENTATION OUTPUT</strong>
-
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns:
+                  "repeat(auto-fit, minmax(180px, 1fr))",
+                gap: "10px",
+                marginBottom: "14px",
+              }}
+            >
+              {[
+                "Submarine Pipeline",
+                "Shipwreck",
+                "Ghost Net",
+                "Mine / Cylinder",
+              ].map((name) => (
                 <div
+                  key={name}
                   style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                    gap: "14px",
+                    padding: "12px 14px",
+                    border:
+                      "1px solid rgba(255,255,255,0.08)",
+                    borderRadius: "10px",
                   }}
                 >
-                  <div>
-                    <small>MODEL OVERLAY</small>
-                    <img
-                      src={cnnResult.outputs.overlay}
-                      alt="Real CNN segmentation overlay"
-                      style={{
-                        width: "100%",
-                        display: "block",
-                        marginTop: "6px",
-                        borderRadius: "8px",
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <small>PROBABILITY MAP</small>
-                    <img
-                      src={cnnResult.outputs.probability_map}
-                      alt="Real CNN probability map"
-                      style={{
-                        width: "100%",
-                        display: "block",
-                        marginTop: "6px",
-                        borderRadius: "8px",
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <small>BINARY PREDICTION MASK</small>
-                  <img
-                    src={cnnResult.outputs.mask}
-                    alt="Real CNN binary prediction mask"
+                  <strong>{name}</strong>
+                  <small
                     style={{
-                      width: "100%",
                       display: "block",
-                      marginTop: "6px",
-                      borderRadius: "8px",
+                      marginTop: "4px",
                     }}
-                  />
+                  >
+                    Detection class
+                  </small>
                 </div>
+              ))}
+            </div>
 
-                <small>
-                  Threshold used: {(cnnResult.threshold * 100).toFixed(0)}%
-                </small>
+            <button
+              className="lab-primary-button"
+              onClick={runCNN}
+              disabled={cnnRunning || !original}
+              style={{
+                width: "100%",
+                opacity:
+                  cnnRunning || !original ? 0.6 : 1,
+              }}
+            >
+              {cnnRunning ? (
+                <>
+                  <LoaderCircle className="spin" />
+                  Running Multi-Class U-Net...
+                </>
+              ) : (
+                <>
+                  <ScanLine />
+                  Run AI Detection
+                </>
+              )}
+            </button>
+
+            {cnnError && (
+              <div
+                style={{
+                  marginTop: "14px",
+                  padding: "14px",
+                  borderRadius: "10px",
+                  border:
+                    "1px solid rgba(255,80,80,0.25)",
+                }}
+              >
+                <strong>AI INFERENCE ERROR</strong>
+
+                <p>{cnnError}</p>
               </div>
             )}
+
+            {cnnResult && (
+          <div
+            className="ai-result-panel"
+            style={{
+              marginTop: "20px",
+              display: "grid",
+              gap: "18px",
+            }}
+          >
+            <div className="ai-result-header">
+              <div>
+                <span className="lab-eyebrow">REAL MODEL RESULT</span>
+                <h3>{cnnResult.model}</h3>
+                <small>{fileName || "Selected sonar image"}</small>
+              </div>
+
+              <div className="ai-live-badge">
+                ● REAL INFERENCE
+              </div>
+            </div>
+
+            <div className="ai-metrics-grid">
+              <div className="ai-metric">
+                <span>DETECTED REGIONS</span>
+                <strong>{cnnResult.detections?.length ?? 0}</strong>
+              </div>
+
+              <div className="ai-metric">
+                <span>ANOMALY CLASSES</span>
+                <strong>4</strong>
+              </div>
+
+              <div className="ai-metric">
+                <span>HIGHEST CONFIDENCE</span>
+                <strong>
+                  {cnnResult.detections?.length
+                    ? `${(
+                        Math.max(
+                          ...cnnResult.detections.map(
+                            (d: any) => d.confidence
+                          )
+                        ) * 100
+                      ).toFixed(1)}%`
+                    : "—"}
+                </strong>
+              </div>
+            </div>
+
+            <div>
+              <h4>DETECTION CLASSES</h4>
+
+              <div className="ai-class-grid">
+                {[
+                  "Submarine Pipeline",
+                  "Shipwreck",
+                  "Ghost Net",
+                  "Mine / Cylinder",
+                ].map((className) => {
+                  const detection = cnnResult.detections?.find(
+                    (d: any) => d.class_name === className
+                  );
+
+                  return (
+                    <div
+                      className={`ai-class-card ${
+                        detection ? "detected" : ""
+                      }`}
+                      key={className}
+                    >
+                      <div>
+                        <strong>{className}</strong>
+                        <small>
+                          {detection
+                            ? "Detected by model"
+                            : "No region detected"}
+                        </small>
+                      </div>
+
+                      <strong>
+                        {detection
+                          ? `${(
+                              detection.confidence * 100
+                            ).toFixed(1)}%`
+                          : "—"}
+                      </strong>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {cnnResult.detections?.length ? (
+              <div>
+                <h4>DETECTED REGIONS</h4>
+
+                <div className="ai-detection-list">
+                  {cnnResult.detections.map(
+                    (detection: any, index: number) => (
+                      <div
+                        className="ai-detection-row"
+                        key={`${detection.class_id}-${index}`}
+                      >
+                        <div>
+                          <strong>{detection.class_name}</strong>
+                          <small>
+                            Bounding region:{" "}
+                            {detection.bbox?.width ?? 0} ×{" "}
+                            {detection.bbox?.height ?? 0}px
+                            {" · "}
+                            X {detection.bbox?.x ?? 0}, Y{" "}
+                            {detection.bbox?.y ?? 0}
+                          </small>
+                        </div>
+
+                        <div className="ai-confidence">
+                          {(
+                            detection.confidence * 100
+                          ).toFixed(1)}
+                          %
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="ai-empty-state">
+                <strong>No anomaly region detected</strong>
+                <span>
+                  The trained model did not produce a segmented
+                  foreground region for this input. This is a real
+                  model result, not a simulated value.
+                </span>
+              </div>
+            )}
+
+            <div className="ai-result-footnote">
+              <strong>MODEL:</strong>{" "}
+              BlueSentinel Multi-Class U-Net · PyTorch · 4 anomaly
+              categories
+            </div>
           </div>
         )}
-      </section>
-
-          <div style={{ marginTop: "20px" }}>
-            <UnifiedAIAnalysis
-              imageUrl={original}
-              fileName={fileName}
-            />
-          </div>
-
+          </section>
         </div>
 
         <aside className="lab-side">
@@ -664,55 +808,82 @@ export default function SonarLaboratory() {
             <MethodologyStatus
               number="01"
               title="Sonar Input"
-              status={original ? "Complete" : "Waiting"}
+              status={
+                original ? "Complete" : "Waiting"
+              }
               active={!!original}
             />
 
             <MethodologyStatus
               number="02"
               title="Preprocessing"
-              status={processed.length ? "Complete" : "Waiting"}
+              status={
+                processed.length
+                  ? "Complete"
+                  : "Waiting"
+              }
               active={processed.length > 0}
             />
 
             <MethodologyStatus
               number="03"
               title="Augmentation"
-              status={augmented.length ? "Complete" : "Waiting"}
+              status={
+                augmented.length
+                  ? "Complete"
+                  : "Waiting"
+              }
               active={augmented.length > 0}
             />
 
             <MethodologyStatus
               number="04"
-              title="CNN AI Analysis"
-              status={aiAnalysisComplete ? "Complete" : "Ready"}
+              title="Multi-Class AI Analysis"
+              status={
+                aiAnalysisComplete
+                  ? "Complete"
+                  : "Ready"
+              }
               active={aiAnalysisComplete}
             />
 
             <MethodologyStatus
               number="05"
-              title="AI Detection"
-              status={aiAnalysisComplete ? "Complete" : "Ready"}
+              title="Anomaly Detection"
+              status={
+                aiAnalysisComplete
+                  ? "Complete"
+                  : "Ready"
+              }
               active={aiAnalysisComplete}
             />
 
             <MethodologyStatus
               number="06"
-              title="Geolocation"
-              status={aiAnalysisComplete ? "Next Stage" : "Upcoming"}
+              title="Geospatial Analysis"
+              status={
+                aiAnalysisComplete
+                  ? "Next Stage"
+                  : "Upcoming"
+              }
               active={false}
             />
           </section>
 
           <section className="lab-panel explanation-panel">
-            <span className="lab-eyebrow">WHY THIS MATTERS</span>
+            <span className="lab-eyebrow">
+              WHY THIS MATTERS
+            </span>
 
-            <h3>Sonar images are not immediately ready for AI.</h3>
+            <h3>
+              Sonar images are not immediately ready for AI.
+            </h3>
 
             <p>
-              Side-scan sonar imagery can contain noise, shadows and variations
-              in intensity. Preprocessing improves the useful visual patterns
-              before they reach the CNN.
+              Side-scan sonar imagery can contain noise,
+              shadows and variations in intensity.
+              Preprocessing improves the useful visual
+              patterns before they reach the AI model.
             </p>
 
             <div className="explanation-flow">
@@ -727,12 +898,10 @@ export default function SonarLaboratory() {
           </section>
         </aside>
       </section>
-
-      
-
     </div>
   );
 }
+
 
 function PipelineStep({
   number,
@@ -746,8 +915,15 @@ function PipelineStep({
   complete: boolean;
 }) {
   return (
-    <div className={`pipeline-step ${active ? "active" : ""} ${complete ? "complete" : ""}`}>
-      <div>{complete ? <CheckCircle2 size={17} /> : number}</div>
+    <div
+      className={`pipeline-step ${
+        active ? "active" : ""
+      } ${complete ? "complete" : ""}`}
+    >
+      <div className="pipeline-number">
+        {complete ? "✓" : number}
+      </div>
+
       <span>{title}</span>
     </div>
   );
@@ -763,12 +939,14 @@ function PanelHeading({
   description: string;
 }) {
   return (
-    <div className="lab-panel-heading">
-      <div className="lab-panel-icon">{icon}</div>
+    <div className="panel-heading">
+      <div className="panel-heading-icon">
+        {icon}
+      </div>
 
       <div>
-        <h2>{title}</h2>
-        <p>{description}</p>
+        <strong>{title}</strong>
+        <span>{description}</span>
       </div>
     </div>
   );
@@ -788,9 +966,13 @@ function MethodCard({
   return (
     <div className="method-card">
       <span>{number}</span>
-      <div className="method-icon">{icon}</div>
+
+      <div className="method-card-icon">
+        {icon}
+      </div>
+
       <strong>{title}</strong>
-      <small>{description}</small>
+      <p>{description}</p>
     </div>
   );
 }
@@ -822,50 +1004,72 @@ function MethodologyStatus({
   active: boolean;
 }) {
   return (
-    <div className={`methodology-status ${active ? "active" : ""}`}>
+    <div
+      className={`methodology-status ${
+        active ? "active" : ""
+      }`}
+    >
       <div>{number}</div>
 
-      <span>{title}</span>
-
-      <small>{status}</small>
+      <section>
+        <strong>{title}</strong>
+        <span>{status}</span>
+      </section>
     </div>
   );
 }
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
-    const image = new Image();
+    const img = new Image();
 
-    image.onload = () => resolve(image);
-    image.onerror = reject;
-
-    image.src = src;
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
   });
 }
 
 function processImage(
-  image: HTMLImageElement,
-  mode:
-    | "resize"
-    | "grayscale"
-    | "denoise"
-    | "contrast"
-    | "flip"
-    | "rotate"
-    | "brightness"
-    | "contrastStrong"
+  img: HTMLImageElement,
+  mode: string
 ): string {
   const canvas = document.createElement("canvas");
 
-  const maxWidth = 900;
-  const scale = Math.min(1, maxWidth / image.width);
-
-  canvas.width = Math.max(1, Math.round(image.width * scale));
-  canvas.height = Math.max(1, Math.round(image.height * scale));
+  canvas.width = img.width;
+  canvas.height = img.height;
 
   const ctx = canvas.getContext("2d");
 
-  if (!ctx) return image.src;
+  if (!ctx) {
+    return img.src;
+  }
+
+  if (mode === "resize") {
+    canvas.width = Math.min(img.width, 1024);
+    canvas.height = Math.min(img.height, 1024);
+  }
+
+  ctx.filter = "none";
+
+  if (mode === "grayscale") {
+    ctx.filter = "grayscale(1)";
+  }
+
+  if (mode === "denoise") {
+    ctx.filter = "blur(0.7px)";
+  }
+
+  if (mode === "contrast") {
+    ctx.filter = "contrast(1.25)";
+  }
+
+  if (mode === "contrastStrong") {
+    ctx.filter = "contrast(1.4)";
+  }
+
+  if (mode === "brightness") {
+    ctx.filter = "brightness(1.18)";
+  }
 
   if (mode === "flip") {
     ctx.translate(canvas.width, 0);
@@ -873,72 +1077,30 @@ function processImage(
   }
 
   if (mode === "rotate") {
-    canvas.width = Math.max(1, Math.round(image.height * scale));
-    canvas.height = Math.max(1, Math.round(image.width * scale));
+    const angle = 12 * Math.PI / 180;
 
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.rotate((12 * Math.PI) / 180);
-    ctx.translate(-canvas.height / 2, -canvas.width / 2);
-  }
+    canvas.width =
+      Math.abs(img.width * Math.cos(angle)) +
+      Math.abs(img.height * Math.sin(angle));
 
-  if (mode === "brightness") {
-    ctx.filter = "brightness(1.3)";
-  }
+    canvas.height =
+      Math.abs(img.width * Math.sin(angle)) +
+      Math.abs(img.height * Math.cos(angle));
 
-  if (mode === "contrast") {
-    ctx.filter = "contrast(1.35)";
-  }
-
-  if (mode === "contrastStrong") {
-    ctx.filter = "contrast(1.55)";
-  }
-
-  ctx.drawImage(
-    image,
-    0,
-    0,
-    mode === "rotate" ? canvas.height : canvas.width,
-    mode === "rotate" ? canvas.width : canvas.height
-  );
-
-  if (
-    mode === "grayscale" ||
-    mode === "denoise" ||
-    mode === "resize"
-  ) {
-    const imageData = ctx.getImageData(
-      0,
-      0,
-      canvas.width,
-      canvas.height
+    ctx.translate(
+      canvas.width / 2,
+      canvas.height / 2
     );
 
-    const data = imageData.data;
+    ctx.rotate(angle);
 
-    for (let i = 0; i < data.length; i += 4) {
-      if (mode === "grayscale") {
-        const gray =
-          0.299 * data[i] +
-          0.587 * data[i + 1] +
-          0.114 * data[i + 2];
-
-        data[i] = gray;
-        data[i + 1] = gray;
-        data[i + 2] = gray;
-      }
-
-      if (mode === "denoise") {
-        const avg =
-          (data[i] + data[i + 1] + data[i + 2]) / 3;
-
-        data[i] = avg * 0.88;
-        data[i + 1] = avg * 0.96;
-        data[i + 2] = avg;
-      }
-    }
-
-    ctx.putImageData(imageData, 0, 0);
+    ctx.translate(
+      -img.width / 2,
+      -img.height / 2
+    );
   }
 
-  return canvas.toDataURL("image/jpeg", 0.9);
+  ctx.drawImage(img, 0, 0);
+
+  return canvas.toDataURL("image/png");
 }

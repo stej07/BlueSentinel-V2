@@ -1,11 +1,8 @@
-import { useState } from "react";
 import {
   Activity,
-  Anchor,
   BarChart3,
   BrainCircuit,
   CheckCircle2,
-  Clock3,
   FileText,
   Globe2,
   Map,
@@ -16,11 +13,10 @@ import {
   ScanLine,
   ShieldCheck,
   Target,
-  Waves,
 } from "lucide-react";
 
 const MODEL = {
-  name: "BlueSentinel CNN U-Net v1",
+  name: "BlueSentinel Multi-Class U-Net",
   checkpoint: "bluesentinel_cnn_v1.pt",
   epoch: 6,
   validationDice: 0.6742,
@@ -28,8 +24,7 @@ const MODEL = {
   testIoU: 0.0691,
   precision: 0.0779,
   recall: 0.3783,
-  threshold: 0.80,
-  parameters: 482449,
+    parameters: 482449,
 };
 
 function Card({
@@ -73,225 +68,6 @@ function Ready() {
 }
 
 export default function OperationsModules({ name }: { name: string }) {
-  const [missionActive, setMissionActive] = useState(
-    () => localStorage.getItem("bluesentinel-mission-active") === "true"
-  );
-
-  const startMission = () => {
-    localStorage.setItem("bluesentinel-mission-active", "true");
-    setMissionActive(true);
-  };
-
-  if (name === "New Mission") {
-    const mission = {
-      mission_id: "BS-DEMO-001",
-      mission_name: "MV Sentinel Deep Survey",
-      type: "DEMO MISSION — Shipwreck Detection",
-      vessel: "DEMO AUV",
-      sonar: "Side-scan Sonar",
-      frequency_khz: 900,
-      depth_m: 42,
-      latitude: 17.6868,
-      longitude: 83.2185,
-      end_latitude: 17.6902,
-      end_longitude: 83.2241,
-      heading: 127,
-      speed_knots: 3.5,
-      sonar_image: "MV_Sentinel_Deep_Survey.png"
-    };
-
-    return (
-      <ModuleShell
-        eyebrow="MISSION CONTROL"
-        title="New Mission"
-        subtitle="Create and initialize an underwater sonar survey mission."
-      >
-        <div className="panel" style={{ padding: 20 }}>
-          <PanelTitle icon={<Navigation />} title="MISSION INITIALIZATION" />
-
-          <div style={grid}>
-            <Card
-              title="MISSION ID"
-              value={mission.mission_id}
-              text="Demo mission identifier"
-              icon={<FileText size={17} />}
-            />
-            <Card
-              title="VESSEL"
-              value={mission.vessel}
-              text="Simulation profile"
-              icon={<Anchor size={17} />}
-            />
-            <Card
-              title="SONAR"
-              value={`${mission.frequency_khz} kHz`}
-              text="Side-scan configuration"
-              icon={<Waves size={17} />}
-            />
-            <Card
-              title="STATUS"
-              value={missionActive ? "ACTIVE" : "READY"}
-              text={missionActive ? "Mission initialized" : "Ready to initialize"}
-              icon={<Activity size={17} />}
-            />
-          </div>
-
-          <div
-            style={{
-              marginTop: 20,
-              padding: 18,
-              borderRadius: 12,
-              background: "rgba(15,23,42,.55)"
-            }}
-          >
-            <h4>DEMO MISSION</h4>
-            <p style={{ opacity: .65 }}>
-              Simulated operational mission data. CNN inference remains real
-              when the sonar image is analyzed in Sonar Laboratory.
-            </p>
-
-            <div style={grid}>
-              <Card
-                title="GPS LATITUDE"
-                value={mission.latitude.toFixed(4)}
-                text="Mission start"
-                icon={<MapPin size={17} />}
-              />
-              <Card
-                title="GPS LONGITUDE"
-                value={mission.longitude.toFixed(4)}
-                text="Mission start"
-                icon={<MapPin size={17} />}
-              />
-              <Card
-                title="SURVEY DEPTH"
-                value={`${mission.depth_m} m`}
-                text="Planned operating depth"
-                icon={<Waves size={17} />}
-              />
-              <Card
-                title="HEADING"
-                value={`${mission.heading}°`}
-                text="Survey heading"
-                icon={<Navigation size={17} />}
-              />
-            </div>
-
-            <div
-              style={{
-                marginTop: 16,
-                padding: 14,
-                border: "1px solid rgba(34,211,238,.2)",
-                borderRadius: 10
-              }}
-            >
-              <strong>SONAR IMAGE</strong>
-              <div style={{ marginTop: 6, opacity: .7 }}>
-                {mission.sonar_image}
-              </div>
-              <div style={{ marginTop: 6, opacity: .55, fontSize: 12 }}>
-                Upload this image through Sonar Laboratory → Upload Sonar.
-              </div>
-            </div>
-
-            <div
-              style={{
-                marginTop: 16,
-                padding: 14,
-                border: "1px solid rgba(34,211,238,.2)",
-                borderRadius: 10
-              }}
-            >
-              <strong>SURVEY TRACK</strong>
-              <div style={{ marginTop: 8, fontFamily: "monospace", opacity: .8 }}>
-                {mission.latitude.toFixed(4)}, {mission.longitude.toFixed(4)}
-                {"  →  "}
-                {mission.end_latitude.toFixed(4)}, {mission.end_longitude.toFixed(4)}
-              </div>
-            </div>
-
-            <div
-              style={{
-                marginTop: 16,
-                padding: 16,
-                borderRadius: 10,
-                border: "1px solid rgba(34,211,238,.25)",
-                background: "rgba(2,15,25,.55)"
-              }}
-            >
-              <strong>SONAR IMAGE UPLOAD</strong>
-              <div style={{ marginTop: 8, opacity: .65, fontSize: 12 }}>
-                Upload the side-scan sonar image for this mission.
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                style={{ marginTop: 12 }}
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-
-                  const reader = new FileReader();
-                  reader.onload = () => {
-                    const mission = JSON.parse(
-                      localStorage.getItem("bluesentinel-active-mission") ||
-                      JSON.stringify({
-                        mission_id: "BS-DEMO-001",
-                        mission_name: "MV Sentinel Deep Survey",
-                        latitude: 17.6868,
-                        longitude: 83.2185,
-                        end_latitude: 17.6902,
-                        end_longitude: 83.2241,
-                        status: "ACTIVE"
-                      })
-                    );
-
-                    mission.sonar_image_name = file.name;
-                    mission.sonar_image_data = reader.result;
-
-                    localStorage.setItem(
-                      "bluesentinel-active-mission",
-                      JSON.stringify(mission)
-                    );
-
-                    alert(
-                      "Sonar image uploaded to the active mission. Go to Sonar Laboratory → Upload Sonar."
-                    );
-                  };
-
-                  reader.readAsDataURL(file);
-                }}
-              />
-            </div>
-
-            <button className="primary-action" onClick={startMission} style={{ marginTop: 18 }}>
-              <Navigation size={17} />
-              {missionActive ? "MISSION ACTIVE" : "INITIALIZE DEMO MISSION"}
-            </button>
-          </div>
-        </div>
-      </ModuleShell>
-    );
-  }
-  if (name === "Mission History") {
-    return (
-      <ModuleShell eyebrow="MISSION CONTROL" title="Mission History" subtitle="Survey mission records and operational status.">
-        <div className="panel" style={{ padding: 20 }}>
-          <PanelTitle icon={<Clock3 />} title="MISSION RECORDS" />
-          <div style={grid}>
-            <Card title="TOTAL MISSIONS" value="01" text="Current project demo record" icon={<FileText size={17} />} />
-            <Card title="LAST MISSION" value="BS-DEMO-001" text="Demo mission" icon={<Navigation size={17} />} />
-            <Card title="STATUS" value={missionActive ? "ACTIVE" : "READY"} text="Mission control" icon={<CheckCircle2 size={17} />} />
-          </div>
-          <div style={row}>
-            <strong>BS-DEMO-001</strong>
-            <span>Demo Survey · CNN Analysis Available · <Ready /></span>
-          </div>
-        </div>
-      </ModuleShell>
-    );
-  }
-
   if (name === "CNN Training") {
     return (
       <ModuleShell eyebrow="AI LABORATORY" title="CNN Training" subtitle="BlueSentinel U-Net training configuration and completed training record.">
@@ -338,7 +114,6 @@ export default function OperationsModules({ name }: { name: string }) {
             <Card title="TEST IoU" value={MODEL.testIoU.toFixed(4)} text="Independent test result" icon={<Target size={17} />} />
             <Card title="PRECISION" value={MODEL.precision.toFixed(4)} text="Independent test result" icon={<ScanLine size={17} />} />
             <Card title="RECALL" value={MODEL.recall.toFixed(4)} text="Independent test result" icon={<Radar size={17} />} />
-            <Card title="THRESHOLD" value={`${MODEL.threshold * 100}%`} text="Selected on validation" icon={<Activity size={17} />} />
           </div>
 
           <div style={{ marginTop: 18, padding: 16, borderRadius: 10, background: "rgba(127,29,29,.18)" }}>
@@ -363,7 +138,7 @@ export default function OperationsModules({ name }: { name: string }) {
             <Card title="METHOD" value="CNN + U-Net" text="Pixel-level segmentation" icon={<BrainCircuit size={17} />} />
             <Card title="REGION EXTRACTION" value="ACTIVE" text="Connected components" icon={<Target size={17} />} />
             <Card title="NOISE FILTER" value="100 px" text="Minimum region area" icon={<ShieldCheck size={17} />} />
-            <Card title="API" value="READY" text="127.0.0.1:8000" icon={<Activity size={17} />} />
+            <Card title="API" value="READY" text="127.0.0.1:8001" icon={<Activity size={17} />} />
           </div>
           <div style={{ ...row, marginTop: 20 }}>
             <span>Upload an image in Sonar Laboratory to run live CNN inference.</span>
@@ -382,26 +157,23 @@ export default function OperationsModules({ name }: { name: string }) {
   }
 
   if (name === "Location") {
-    const saved = localStorage.getItem("bluesentinel-active-mission");
-    const mission = saved ? JSON.parse(saved) : null;
-
-    const lat = mission?.latitude ?? 17.6868;
-    const lon = mission?.longitude ?? 83.2185;
+    const lat = 17.6868;
+    const lon = 83.2185;
 
     return (
       <ModuleShell
         eyebrow="GEOSPATIAL"
-        title="Mission Location"
-        subtitle="GPS position associated with the active sonar mission."
+        title="Detection Location"
+        subtitle="GPS reference for sonar analysis results."
       >
         <div className="panel" style={{ padding: 20 }}>
           <PanelTitle icon={<MapPin />} title="GPS POSITION" />
 
           <div style={grid}>
-            <Card title="MISSION" value={mission?.mission_id ?? "BS-DEMO-001"} text="Active mission" icon={<Navigation size={17} />} />
+            <Card title="ANALYSIS" value={"SONAR"} text="Active sonar analysis" icon={<Navigation size={17} />} />
             <Card title="LATITUDE" value={Number(lat).toFixed(4)} text="GPS latitude" icon={<MapPin size={17} />} />
             <Card title="LONGITUDE" value={Number(lon).toFixed(4)} text="GPS longitude" icon={<MapPin size={17} />} />
-            <Card title="STATUS" value={mission ? "CONNECTED" : "READY"} text="Mission GPS link" icon={<Activity size={17} />} />
+            <Card title="STATUS" value={"READY"} text="Geospatial status" icon={<Activity size={17} />} />
           </div>
 
           <div
@@ -432,19 +204,16 @@ export default function OperationsModules({ name }: { name: string }) {
     );
   }
   if (name === "Survey Track") {
-    const saved = localStorage.getItem("bluesentinel-active-mission");
-    const mission = saved ? JSON.parse(saved) : null;
-
-    const startLat = mission?.latitude ?? 17.6868;
-    const startLon = mission?.longitude ?? 83.2185;
-    const endLat = mission?.end_latitude ?? 17.6902;
-    const endLon = mission?.end_longitude ?? 83.2241;
+    const startLat = 17.6868;
+    const startLon = 83.2185;
+    const endLat = 17.6902;
+    const endLon = 83.2241;
 
     return (
       <ModuleShell
         eyebrow="GEOSPATIAL"
-        title="Survey Track"
-        subtitle="Planned sonar survey path linked to the active mission."
+        title="Sonar Coverage Track"
+        subtitle="Reference sonar coverage path for geospatial analysis."
       >
         <div className="panel" style={{ padding: 20 }}>
           <PanelTitle icon={<Route />} title="SURVEY TRACK" />
@@ -452,8 +221,8 @@ export default function OperationsModules({ name }: { name: string }) {
           <div style={grid}>
             <Card title="START" value={`${Number(startLat).toFixed(4)}, ${Number(startLon).toFixed(4)}`} text="GPS start point" icon={<MapPin size={17} />} />
             <Card title="END" value={`${Number(endLat).toFixed(4)}, ${Number(endLon).toFixed(4)}`} text="GPS end point" icon={<MapPin size={17} />} />
-            <Card title="HEADING" value={`${mission?.heading ?? 127}°`} text="Survey direction" icon={<Navigation size={17} />} />
-            <Card title="SPEED" value={`${mission?.speed_knots ?? 3.5} kn`} text="Survey speed" icon={<Activity size={17} />} />
+            <Card title="HEADING" value={`${127}°`} text="Survey direction" icon={<Navigation size={17} />} />
+            <Card title="SPEED" value={`${3.5} kn`} text="Survey speed" icon={<Activity size={17} />} />
           </div>
 
           <div
@@ -478,7 +247,7 @@ export default function OperationsModules({ name }: { name: string }) {
               <div style={{ fontSize: 11, marginTop: 4 }}>END</div>
             </div>
             <div style={{ position: "absolute", left: 20, top: 18, opacity: .55 }}>
-              DEMO SONAR SURVEY TRACK
+              SONAR COVERAGE TRACK
             </div>
           </div>
         </div>
@@ -486,28 +255,27 @@ export default function OperationsModules({ name }: { name: string }) {
     );
   }
   if (name === "GIS Map") {
-    const saved = localStorage.getItem("bluesentinel-active-mission");
-    const mission = saved ? JSON.parse(saved) : null;
-
-    const lat = mission?.latitude ?? 17.6868;
-    const lon = mission?.longitude ?? 83.2185;
-    const endLat = mission?.end_latitude ?? 17.6902;
-    const endLon = mission?.end_longitude ?? 83.2241;
+    const lat = 17.6868;
+    const lon = 83.2185;
+    const endLat = 17.6902;
+    const endLon = 83.2241;
 
     return (
       <ModuleShell
         eyebrow="GEOSPATIAL"
-        title="GIS Mission Map"
-        subtitle="Mission GPS, survey track and sonar analysis location."
+        title="Anomaly GIS Map"
+        subtitle="Geospatial view of sonar analysis and detected anomaly locations."
       >
         <div className="panel" style={{ padding: 20 }}>
-          <PanelTitle icon={<Map />} title="MISSION GIS VIEW" />
+          <PanelTitle icon={<Map />} title="ANOMALY GIS VIEW" />
 
           <div style={grid}>
-            <Card title="MISSION" value={mission?.mission_id ?? "BS-DEMO-001"} text="Mission linked to GIS" icon={<Navigation size={17} />} />
+            <Card title="ANALYSIS" value={"SONAR"} text="Sonar analysis reference" icon={<Navigation size={17} />} />
             <Card title="GPS" value={`${Number(lat).toFixed(4)}, ${Number(lon).toFixed(4)}`} text="Detection reference point" icon={<MapPin size={17} />} />
             <Card title="TRACK" value="CONNECTED" text="Survey path available" icon={<Route size={17} />} />
-            <Card title="GIS STATUS" value="READY" text="Geospatial module" icon={<Globe2 size={17} />} />
+            <Card title="GIS STATUS" value="READY" text="Geospatial analysis available" icon={<Globe2 size={17} />} />
+            <Card title="DATA SOURCE" value="SONAR" text="AI-derived anomaly coordinates" icon={<MapPin size={17} />} />
+            <Card title="MAP MODE" value="ANOMALY" text="Detection visualization" icon={<ScanLine size={17} />} />
           </div>
 
           <div
@@ -549,14 +317,14 @@ export default function OperationsModules({ name }: { name: string }) {
                 textAlign: "center"
               }}
             >
-              <strong>SONAR MISSION</strong>
+              <strong>SONAR ANALYSIS</strong>
               <div style={{ fontSize: 11, opacity: .65, marginTop: 4 }}>
                 CNN analysis reference
               </div>
             </div>
 
             <div style={{ position: "absolute", left: 18, bottom: 16, opacity: .65, fontSize: 12 }}>
-              DEMO GIS • GPS + SURVEY TRACK CONNECTED
+              SONAR ANALYSIS • GPS + SURVEY TRACK
             </div>
           </div>
         </div>
@@ -565,14 +333,16 @@ export default function OperationsModules({ name }: { name: string }) {
   }
   if (name === "Reports") {
     return (
-      <ModuleShell eyebrow="REPORTING" title="Reports" subtitle="BlueSentinel mission and CNN analysis summary.">
+      <ModuleShell eyebrow="REPORTING" title="Analysis Reports" subtitle="Structured outputs from BlueSentinel AI sonar analysis.">
         <div className="panel" style={{ padding: 20 }}>
           <PanelTitle icon={<FileText />} title="PROJECT ANALYSIS REPORT" />
           <div style={grid}>
-            <Card title="MODEL" value="U-Net CNN" text="BlueSentinel CNN v1" icon={<BrainCircuit size={17} />} />
+            <Card title="MODEL" value="Multi-Class U-Net" text="BlueSentinel AI model" icon={<BrainCircuit size={17} />} />
             <Card title="VAL DICE" value={MODEL.validationDice.toFixed(4)} text="Best validation" icon={<BarChart3 size={17} />} />
             <Card title="TEST DICE" value={MODEL.testDice.toFixed(4)} text="120 unseen test images" icon={<Target size={17} />} />
             <Card title="STATUS" value="READY" text="Report data available" icon={<CheckCircle2 size={17} />} />
+            <Card title="SOURCE" value="AI" text="Generated from analysis results" icon={<BrainCircuit size={17} />} />
+            <Card title="FORMAT" value="SUMMARY" text="Detection and geospatial report" icon={<FileText size={17} />} />
           </div>
           <div style={{ marginTop: 20, padding: 18, borderRadius: 12, background: "rgba(15,23,42,.6)" }}>
             <h4>END-TO-END METHODOLOGY</h4>

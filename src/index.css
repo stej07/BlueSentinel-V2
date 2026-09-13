@@ -2505,46 +2505,6 @@ button:focus-visible {
   }
 }
 
-/* Mission mode toggle */
-.mode-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid rgba(120, 210, 225, 0.25);
-  border-radius: 8px;
-  padding: 8px 12px;
-  background: rgba(8, 35, 48, 0.7);
-  color: #b8dce4;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.mode-toggle:hover {
-  border-color: rgba(120, 210, 225, 0.55);
-  transform: translateY(-1px);
-}
-
-.mode-toggle .mode-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #61d6e4;
-  box-shadow: 0 0 8px rgba(97, 214, 228, 0.7);
-}
-
-.mode-toggle.demo {
-  border-color: rgba(245, 183, 75, 0.45);
-  color: #f5c86b;
-}
-
-.mode-toggle.demo .mode-dot {
-  background: #f5b74b;
-  box-shadow: 0 0 8px rgba(245, 183, 75, 0.7);
-}
-
 /* Demo GIS visualization */
 .demo-map-label {
   position: absolute;
@@ -2735,87 +2695,6 @@ button:focus-visible {
 .marker-4 {
   left: 78%;
   top: 25%;
-}
-
-/* Demo mission timeline */
-.demo-timeline {
-  position: relative;
-  padding: 8px 4px 8px 8px;
-}
-
-.timeline-event {
-  position: relative;
-  display: flex;
-  gap: 12px;
-  min-height: 48px;
-}
-
-.timeline-marker {
-  position: relative;
-  width: 14px;
-  flex: 0 0 14px;
-}
-
-.timeline-marker::before {
-  content: "";
-  position: absolute;
-  left: 6px;
-  top: 0;
-  bottom: -1px;
-  width: 1px;
-  background: rgba(97, 214, 228, 0.25);
-}
-
-.timeline-event:last-child .timeline-marker::before {
-  display: none;
-}
-
-.timeline-marker span {
-  position: absolute;
-  top: 5px;
-  left: 3px;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #61d6e4;
-  box-shadow: 0 0 7px rgba(97, 214, 228, 0.7);
-}
-
-.timeline-content {
-  flex: 1;
-  padding-bottom: 13px;
-}
-
-.timeline-content > div {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.timeline-content strong {
-  font-size: 11px;
-}
-
-.timeline-content time {
-  font-size: 9px;
-  color: #75a9b5;
-  font-family: monospace;
-}
-
-.timeline-content small {
-  display: block;
-  margin-top: 3px;
-  color: #7199a3;
-  font-size: 9px;
-}
-
-.timeline-simulated {
-  position: absolute;
-  right: 0;
-  bottom: 2px;
-  font-size: 7px;
-  color: #f5c86b;
-  letter-spacing: 0.08em;
 }
 
 /* Demo detection summary */
@@ -2891,4 +2770,1129 @@ button:focus-visible {
   font-size: 7px;
   font-weight: 700;
   letter-spacing: 0.08em;
+}
+
+/* =========================================================
+   BLUESENTINEL V2 — SONAR LABORATORY UI
+   ========================================================= */
+
+.sonar-lab-page {
+  padding: 28px 32px 40px;
+  max-width: 1700px;
+  margin: 0 auto;
+}
+
+.sonar-lab-page .lab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.sonar-lab-page .lab-title-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sonar-lab-page .lab-title-icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(34,211,238,.18), rgba(14,116,144,.12));
+  border: 1px solid rgba(34,211,238,.28);
+  color: #22d3ee;
+}
+
+.sonar-lab-page .lab-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  color: #22d3ee;
+  margin-bottom: 5px;
+}
+
+.sonar-lab-page .lab-header h1 {
+  margin: 0;
+  font-size: 27px;
+  letter-spacing: -.02em;
+}
+
+.sonar-lab-page .lab-header p {
+  margin: 7px 0 0;
+  color: #8fa7b8;
+  font-size: 13px;
+}
+
+.sonar-lab-page .lab-status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(34,211,238,.2);
+  background: rgba(8,47,73,.28);
+  color: #9eeaf5;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  white-space: nowrap;
+}
+
+.sonar-lab-page .lab-status span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 12px rgba(34,197,94,.7);
+}
+
+.sonar-lab-page > .pipeline {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  border-radius: 14px;
+  background: rgba(7,20,31,.72);
+  border: 1px solid rgba(148,163,184,.12);
+}
+
+.sonar-lab-page .pipeline-line {
+  flex: 1;
+  height: 1px;
+  margin: 0 10px;
+  background: linear-gradient(90deg, rgba(34,211,238,.35), rgba(148,163,184,.12));
+}
+
+.sonar-lab-page .lab-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+.sonar-lab-page .lab-main {
+  display: grid;
+  gap: 20px;
+}
+
+.sonar-lab-page .lab-panel {
+  padding: 22px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(10,25,38,.94), rgba(5,15,25,.94));
+  border: 1px solid rgba(148,163,184,.13);
+  box-shadow: 0 14px 40px rgba(0,0,0,.14);
+}
+
+.sonar-lab-page .lab-panel:hover {
+  border-color: rgba(34,211,238,.2);
+}
+
+.sonar-lab-page .upload-zone {
+  width: 100%;
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border-radius: 14px;
+  border: 1px dashed rgba(34,211,238,.32);
+  background:
+    radial-gradient(circle at center, rgba(34,211,238,.08), transparent 48%),
+    rgba(3,15,25,.65);
+  color: inherit;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.sonar-lab-page .upload-zone:hover {
+  border-color: rgba(34,211,238,.7);
+  background:
+    radial-gradient(circle at center, rgba(34,211,238,.13), transparent 48%),
+    rgba(3,15,25,.8);
+  transform: translateY(-1px);
+}
+
+.sonar-lab-page .upload-icon {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  color: #22d3ee;
+  background: rgba(34,211,238,.1);
+  border: 1px solid rgba(34,211,238,.2);
+}
+
+.sonar-lab-page .upload-zone strong {
+  font-size: 15px;
+}
+
+.sonar-lab-page .upload-zone span {
+  color: #9aafbd;
+  font-size: 12px;
+}
+
+.sonar-lab-page .upload-zone small {
+  color: #60788a;
+  font-size: 10px;
+  letter-spacing: .08em;
+}
+
+.sonar-lab-page .original-preview {
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid rgba(148,163,184,.12);
+  background: #020a12;
+}
+
+.sonar-lab-page .image-card-header {
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(148,163,184,.1);
+}
+
+.sonar-lab-page .image-card-header > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #b8cad6;
+}
+
+.sonar-lab-page .image-card-header button {
+  border: 1px solid rgba(34,211,238,.2);
+  border-radius: 8px;
+  padding: 7px 11px;
+  background: rgba(34,211,238,.07);
+  color: #67e8f9;
+  cursor: pointer;
+}
+
+.sonar-lab-page .sonar-image-wrapper {
+  position: relative;
+  max-height: 480px;
+  overflow: hidden;
+  background: #000;
+}
+
+.sonar-lab-page .sonar-image-wrapper img {
+  width: 100%;
+  max-height: 480px;
+  object-fit: contain;
+  display: block;
+}
+
+.sonar-lab-page .image-overlay {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 5px 8px;
+  border-radius: 5px;
+  background: rgba(0,0,0,.68);
+  color: #d7f9ff;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+
+.sonar-lab-page .file-details {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  color: #71899a;
+  font-size: 11px;
+}
+
+.sonar-lab-page .file-details span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sonar-lab-page .methodology-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.sonar-lab-page .methodology-grid > *,
+.sonar-lab-page .augmentation-methods > * {
+  transition: .18s ease;
+}
+
+.sonar-lab-page .methodology-grid > *:hover {
+  transform: translateY(-2px);
+}
+
+.sonar-lab-page .processed-grid,
+.sonar-lab-page .augmented-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.sonar-lab-page .processed-card,
+.sonar-lab-page .augmented-card {
+  overflow: hidden;
+  border-radius: 12px;
+  background: rgba(2,12,21,.8);
+  border: 1px solid rgba(148,163,184,.11);
+}
+
+.sonar-lab-page .processed-image,
+.sonar-lab-page .augmented-image {
+  background: #000;
+}
+
+.sonar-lab-page .processed-image img,
+.sonar-lab-page .augmented-image img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+}
+
+.sonar-lab-page .processed-info,
+.sonar-lab-page .augmented-card > div:last-child {
+  padding: 12px;
+}
+
+.sonar-lab-page .processed-info strong,
+.sonar-lab-page .augmented-card strong {
+  display: block;
+  font-size: 12px;
+}
+
+.sonar-lab-page .processed-info span,
+.sonar-lab-page .augmented-card span {
+  display: block;
+  margin-top: 4px;
+  color: #71899a;
+  font-size: 10px;
+}
+
+.sonar-lab-page .augmentation-methods {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.sonar-lab-page .lab-primary-button,
+.sonar-lab-page .lab-secondary-button {
+  min-height: 42px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.sonar-lab-page .lab-primary-button {
+  border: 1px solid rgba(34,211,238,.45);
+  background: linear-gradient(135deg, rgba(8,145,178,.8), rgba(14,116,144,.65));
+  color: #e7fcff;
+}
+
+.sonar-lab-page .lab-secondary-button {
+  border: 1px solid rgba(148,163,184,.2);
+  background: rgba(148,163,184,.07);
+  color: #c5d5df;
+}
+
+.sonar-lab-page .lab-primary-button:hover:not(:disabled),
+.sonar-lab-page .lab-secondary-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(34,211,238,.65);
+}
+
+.sonar-lab-page button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.sonar-lab-page .spin {
+  animation: bluesentinel-spin .9s linear infinite;
+}
+
+@keyframes bluesentinel-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1000px) {
+  .sonar-lab-page {
+    padding: 20px;
+  }
+
+  .sonar-lab-page .lab-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .sonar-lab-page .methodology-grid,
+  .sonar-lab-page .augmentation-methods {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .sonar-lab-page {
+    padding: 16px;
+  }
+
+  .sonar-lab-page > .pipeline {
+    overflow-x: auto;
+  }
+
+  .sonar-lab-page .processed-grid,
+  .sonar-lab-page .augmented-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   CNN INFERENCE CONSOLE
+   ========================================================= */
+
+.sonar-lab-page .lab-panel:has(.cnn-console) {
+  overflow: hidden;
+}
+
+.cnn-console {
+  margin-top: 18px;
+}
+
+.cnn-launch-card {
+  min-height: 96px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border: 1px solid rgba(34,211,238,.22);
+  border-radius: 13px;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(34,211,238,.09), transparent 35%),
+    rgba(2,12,21,.78);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.cnn-launch-card:hover:not(:disabled) {
+  border-color: rgba(34,211,238,.55);
+  transform: translateY(-1px);
+}
+
+.cnn-launch-card:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.cnn-launch-icon {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  color: #22d3ee;
+  background: rgba(34,211,238,.09);
+  border: 1px solid rgba(34,211,238,.18);
+}
+
+.cnn-launch-content {
+  flex: 1;
+}
+
+.cnn-launch-content strong {
+  display: block;
+  color: #e7f7fb;
+  font-size: 14px;
+}
+
+.cnn-launch-content span {
+  display: block;
+  margin-top: 5px;
+  color: #7891a2;
+  font-size: 11px;
+}
+
+.cnn-live-badge {
+  padding: 6px 9px;
+  border-radius: 6px;
+  background: rgba(34,197,94,.08);
+  border: 1px solid rgba(34,197,94,.2);
+  color: #86efac;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .1em;
+}
+
+.cnn-error-card {
+  margin-top: 14px;
+  padding: 13px 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(248,113,113,.25);
+  background: rgba(127,29,29,.12);
+}
+
+.cnn-error-card strong {
+  color: #fca5a5;
+  font-size: 10px;
+  letter-spacing: .1em;
+}
+
+.cnn-error-card p {
+  margin: 6px 0 0;
+  color: #d6a5a5;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.cnn-result-console {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 14px;
+  background: #020b13;
+  border: 1px solid rgba(34,211,238,.15);
+}
+
+.cnn-result-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.cnn-result-heading .eyebrow {
+  color: #22d3ee;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.cnn-result-heading h3 {
+  margin: 5px 0 0;
+  font-size: 15px;
+}
+
+.cnn-model-name {
+  max-width: 330px;
+  color: #7891a2;
+  font-size: 10px;
+  text-align: right;
+}
+
+.cnn-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.cnn-metric {
+  padding: 13px;
+  border-radius: 10px;
+  background: rgba(148,163,184,.045);
+  border: 1px solid rgba(148,163,184,.09);
+}
+
+.cnn-metric span {
+  display: block;
+  color: #668091;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+
+.cnn-metric strong {
+  display: block;
+  margin-top: 6px;
+  color: #dffaff;
+  font-size: 20px;
+}
+
+.cnn-output-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 10px;
+  color: #b8cad6;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .1em;
+}
+
+.cnn-output-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.cnn-output-card {
+  overflow: hidden;
+  border-radius: 11px;
+  background: #000;
+  border: 1px solid rgba(148,163,184,.1);
+}
+
+.cnn-output-card header {
+  padding: 9px 11px;
+  background: rgba(7,20,31,.92);
+  border-bottom: 1px solid rgba(148,163,184,.08);
+  color: #91a8b7;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.cnn-output-card img {
+  display: block;
+  width: 100%;
+  max-height: 330px;
+  object-fit: contain;
+}
+
+.cnn-output-card.full {
+  grid-column: 1 / -1;
+}
+
+.cnn-result-note {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 11px 13px;
+  border-radius: 9px;
+  background: rgba(34,211,238,.045);
+  border: 1px solid rgba(34,211,238,.1);
+  color: #718b9c;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.cnn-threshold {
+  margin-top: 9px;
+  color: #60798a;
+  font-size: 9px;
+}
+
+@media (max-width: 760px) {
+  .cnn-metrics,
+  .cnn-output-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cnn-output-card.full {
+    grid-column: auto;
+  }
+
+  .cnn-result-heading {
+    flex-direction: column;
+  }
+
+  .cnn-model-name {
+    text-align: left;
+  }
+}
+
+/* =========================================================
+   BLUESENTINEL V2 — GEOSPATIAL INTELLIGENCE UI
+   ========================================================= */
+
+.module-page,
+.module-page > div {
+  scrollbar-width: thin;
+}
+
+.module-page {
+  min-height: 100%;
+}
+
+.module-page .panel {
+  background: linear-gradient(145deg, rgba(8,25,38,.94), rgba(3,13,22,.96)) !important;
+  border: 1px solid rgba(34,211,238,.12) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 16px 45px rgba(0,0,0,.16);
+}
+
+.module-page .panel:hover {
+  border-color: rgba(34,211,238,.22) !important;
+}
+
+.module-page .lab-eyebrow {
+  color: #22d3ee;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+
+.module-page h2 {
+  letter-spacing: -.02em;
+}
+
+.module-page .panel h3 {
+  color: #d9edf3;
+  font-size: 14px;
+  letter-spacing: .03em;
+}
+
+.module-page .panel h4 {
+  color: #9edce6;
+  font-size: 10px;
+  letter-spacing: .12em;
+}
+
+.module-page .panel > div[style*="grid"] > div {
+  transition: .2s ease;
+}
+
+.module-page .panel > div[style*="grid"] > div:hover {
+  transform: translateY(-2px);
+  border-color: rgba(34,211,238,.25) !important;
+}
+
+/* GIS visualization surfaces */
+.module-page [style*="minHeight: 260"],
+.module-page [style*="height: 300"],
+.module-page [style*="height: 430"] {
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 80px rgba(0,0,0,.25),
+    0 12px 35px rgba(0,0,0,.15);
+}
+
+/* Coordinate readouts */
+.module-page [style*="monospace"] {
+  color: #8eeaf5;
+  letter-spacing: .04em;
+}
+
+/* Map grid atmosphere */
+.module-page [style*="backgroundImage"] {
+  opacity: .2 !important;
+}
+
+/* Map labels */
+.module-page small {
+  color: #76909f;
+}
+
+/* Location / track / GIS cards */
+.module-page .panel > div[style*="grid"] strong {
+  color: #d9edf3;
+}
+
+.module-page .panel > div[style*="grid"] span {
+  color: #617b8b;
+}
+
+/* GIS route glow */
+.module-page [style*="boxShadow"] {
+  filter: drop-shadow(0 0 5px rgba(34,211,238,.25));
+}
+
+/* Geospatial status */
+.module-page .panel svg {
+  color: #67e8f9;
+}
+
+/* Mobile */
+@media (max-width: 760px) {
+  .module-page {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .module-page .panel {
+    padding: 16px !important;
+  }
+}
+
+
+/* ============================================================
+   BLUESENTINEL V2 — FINAL SONAR AI WORKSPACE
+   ============================================================ */
+
+.sonar-lab-page .lab-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 330px !important;
+  gap: 20px !important;
+  align-items: start !important;
+}
+
+.sonar-lab-page .lab-main {
+  min-width: 0 !important;
+}
+
+.sonar-lab-page .lab-side {
+  min-width: 0 !important;
+  position: sticky !important;
+  top: 105px !important;
+  align-self: start !important;
+}
+
+.sonar-lab-page .methodology-panel {
+  position: relative !important;
+  height: fit-content !important;
+}
+
+.sonar-lab-page .methodology-panel .methodology-status {
+  min-height: 54px;
+}
+
+.ai-result-panel {
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  border-radius: 16px;
+  padding: 20px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(5, 24, 38, 0.96),
+      rgba(3, 15, 27, 0.98)
+    );
+}
+
+.ai-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.ai-result-header h3 {
+  margin: 5px 0 3px;
+}
+
+.ai-live-badge {
+  white-space: nowrap;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.ai-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ai-metric {
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.ai-metric span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+}
+
+.ai-metric strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 23px;
+}
+
+.ai-class-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ai-class-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 68px;
+  padding: 13px 15px;
+  border-radius: 11px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.ai-class-card.detected {
+  border-color: rgba(45, 212, 191, 0.4);
+}
+
+.ai-class-card strong {
+  display: block;
+}
+
+.ai-class-card small {
+  display: block;
+  margin-top: 4px;
+  opacity: 0.6;
+}
+
+.ai-detection-list {
+  display: grid;
+  gap: 8px;
+}
+
+.ai-detection-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.62);
+  border: 1px solid rgba(56, 189, 248, 0.12);
+}
+
+.ai-detection-row small {
+  display: block;
+  margin-top: 5px;
+  opacity: 0.62;
+}
+
+.ai-confidence {
+  font-size: 18px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ai-empty-state {
+  display: grid;
+  gap: 6px;
+  padding: 17px;
+  border-radius: 11px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.ai-empty-state span {
+  font-size: 13px;
+  opacity: 0.68;
+  line-height: 1.5;
+}
+
+.ai-result-footnote {
+  padding: 11px 13px;
+  border-radius: 9px;
+  background: rgba(15, 23, 42, 0.45);
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+@media (max-width: 1050px) {
+  .sonar-lab-page .lab-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .sonar-lab-page .lab-side {
+    position: relative !important;
+    top: auto !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .ai-metrics-grid,
+  .ai-class-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-result-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+/* =========================================================
+   BLUESENTINEL V2 — FINAL SIH VISUAL SYSTEM
+   Visual-only upgrade. AI/API logic untouched.
+   ========================================================= */
+
+:root {
+  --bs-bg: #07111a;
+  --bs-panel: rgba(13, 27, 38, 0.88);
+  --bs-panel-2: rgba(17, 34, 47, 0.72);
+  --bs-border: rgba(148, 190, 210, 0.14);
+  --bs-text: #edf7fa;
+  --bs-muted: #8da8b5;
+  --bs-accent: #39d5c5;
+  --bs-accent-soft: rgba(57, 213, 197, 0.11);
+}
+
+/* Dashboard */
+main:has(h2) {
+  background:
+    radial-gradient(circle at 78% 8%, rgba(40, 164, 184, .10), transparent 30%),
+    radial-gradient(circle at 15% 85%, rgba(45, 111, 145, .08), transparent 32%);
+}
+
+main:has(h2) h2 {
+  letter-spacing: .08em;
+  font-weight: 700;
+}
+
+main:has(h2) [class*="card"],
+main:has(h2) [class*="Card"],
+main:has(h2) [class*="panel"],
+main:has(h2) [class*="Panel"] {
+  border: 1px solid var(--bs-border);
+  background: linear-gradient(145deg, var(--bs-panel), var(--bs-panel-2));
+  box-shadow: 0 14px 40px rgba(0,0,0,.18);
+  backdrop-filter: blur(14px);
+  transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+main:has(h2) [class*="card"]:hover,
+main:has(h2) [class*="Card"]:hover {
+  border-color: rgba(57,213,197,.25);
+  transform: translateY(-2px);
+  box-shadow: 0 18px 45px rgba(0,0,0,.24);
+}
+
+/* Dashboard metric numbers */
+main:has(h2) [class*="metric"],
+main:has(h2) [class*="Metric"],
+main:has(h2) [class*="stat"],
+main:has(h2) [class*="Stat"] {
+  color: var(--bs-text);
+}
+
+/* Sonar Laboratory */
+.sonar-lab-page {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 28px 30px 60px;
+  color: var(--bs-text);
+}
+
+.sonar-lab-page .lab-header {
+  margin-bottom: 24px;
+}
+
+.sonar-lab-page .lab-header h1,
+.sonar-lab-page .lab-header h2 {
+  letter-spacing: -.02em;
+  font-weight: 750;
+}
+
+.sonar-lab-page .lab-header p {
+  color: var(--bs-muted);
+}
+
+.sonar-lab-page .lab-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 340px !important;
+  gap: 22px !important;
+  align-items: start !important;
+}
+
+.sonar-lab-page .lab-main,
+.sonar-lab-page .lab-side {
+  min-width: 0;
+}
+
+.sonar-lab-page .lab-side {
+  position: sticky;
+  top: 24px;
+}
+
+.sonar-lab-page [class*="panel"],
+.sonar-lab-page [class*="Panel"],
+.sonar-lab-page .ai-result-panel {
+  background: linear-gradient(145deg, rgba(13,27,38,.94), rgba(16,35,48,.82));
+  border: 1px solid var(--bs-border);
+  border-radius: 16px;
+  box-shadow: 0 18px 45px rgba(0,0,0,.20);
+  backdrop-filter: blur(16px);
+}
+
+.sonar-lab-page .ai-result-panel {
+  padding: 22px !important;
+}
+
+.sonar-lab-page .lab-primary-button {
+  min-height: 48px;
+  border-radius: 11px !important;
+  border: 1px solid rgba(57,213,197,.35) !important;
+  background: linear-gradient(135deg, rgba(57,213,197,.95), rgba(32,157,177,.95)) !important;
+  color: #031015 !important;
+  font-weight: 750;
+  letter-spacing: .01em;
+  box-shadow: 0 8px 25px rgba(37,185,184,.18);
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+
+.sonar-lab-page .lab-primary-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow: 0 12px 30px rgba(37,185,184,.25);
+}
+
+.sonar-lab-page .lab-primary-button:disabled {
+  filter: grayscale(.25);
+}
+
+.sonar-lab-page input[type="file"] {
+  cursor: pointer;
+}
+
+.sonar-lab-page img {
+  border-radius: 12px;
+}
+
+.sonar-lab-page .spin {
+  animation: bs-spin .9s linear infinite;
+}
+
+@keyframes bs-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Detection result emphasis */
+.sonar-lab-page .ai-result-panel strong {
+  color: var(--bs-text);
+}
+
+.sonar-lab-page .ai-result-panel small {
+  color: var(--bs-muted);
+}
+
+@media (max-width: 1050px) {
+  .sonar-lab-page .lab-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .sonar-lab-page .lab-side {
+    position: static;
+  }
+}
+
+@media (max-width: 700px) {
+  .sonar-lab-page {
+    padding: 20px 16px 45px;
+  }
 }
