@@ -2,6 +2,6 @@ services:
   - type: web
     name: bluesentinel-ai-api
     runtime: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt && python scripts/download_model.py
     startCommand: ./start_backend.sh
     healthCheckPath: /health
