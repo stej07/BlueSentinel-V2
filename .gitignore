@@ -63,3 +63,6 @@ data/demo_mission/
 *.step1_backup
 
 ai/training/bluesentinel_cnn_v1/dataset/
+
+ai/training/train_targeted.py
+ai/training/bluesentinel_multiclass_v1/training_history.json
