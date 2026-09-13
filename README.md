@@ -1,75 +1,82 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+## AI-Powered Automated Underwater Marine Debris and Anomaly Detection using Side-Scan Sonar Imagery
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+BlueSentinel V2 is an SIH 2026 research prototype that analyses underwater side-scan sonar imagery using a custom PyTorch multi-class U-Net, FastAPI backend, and React + TypeScript dashboard.
 
-## React Compiler
+## 🚀 Project Flow
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+![BlueSentinel Architecture](docs/architecture/bluesentinel-architecture.png)
 
-## Expanding the ESLint configuration
+**Side-Scan Sonar → Preprocessing → AI Detection → Confidence Scoring → Geospatial Analysis → Reports → Dashboard**
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🎯 Detection Classes
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Submarine Pipeline
+- Shipwreck
+- Ghost Net
+- Mine / Cylinder
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## ✨ Features
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Sonar image upload
+- Sonar preprocessing
+- Image augmentation
+- Multi-class AI analysis
+- Confidence scoring
+- Detection visualization
+- Geospatial analysis
+- GIS anomaly visualization
+- Structured reports
+- REST API inference
+- SIH-ready dashboard
 
-```
+## 🧠 AI Architecture
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+**Input Sonar Image**  
+↓  
+**Image Preprocessing**  
+↓  
+**Custom Multi-Class U-Net**  
+↓  
+**Pixel-Level Anomaly Segmentation**  
+↓  
+**Confidence Scoring**  
+↓  
+**Detection Results**
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🏗️ System Architecture
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Layer | Technology |
+|---|---|
+| Frontend | React + TypeScript + Vite |
+| Backend | FastAPI + Uvicorn |
+| AI | PyTorch + Custom U-Net |
+| Image Processing | OpenCV + NumPy + Pillow |
+| Deployment | Vercel + Render |
+| Model Hosting | Hugging Face |
 
-```
+## 📂 Repository Structure
+
+```text
+BlueSentinel-V2/
+├── ai/
+│   ├── dataset/
+│   ├── evaluation/
+│   ├── inference/
+│   ├── models/
+│   └── training/
+├── api/
+├── docs/
+│   ├── architecture/
+│   ├── methodology/
+│   └── screenshots/
+├── public/
+├── scripts/
+├── src/
+├── assets/
+├── render.yaml
+├── requirements.txt
+├── start_backend.sh
+├── vite.config.ts
+└── README.md
