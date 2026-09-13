@@ -454,215 +454,276 @@ function Dashboard({
     timeZone: "Asia/Kolkata",
   });
 
+  const detectedTypes = [...new Set(detections.map((d) => d.type))];
+
   return (
-    <div className="dashboard">
-      <section className="dashboard-hero">
-        <div>
-          <span className="eyebrow">UNDERWATER SONAR INTELLIGENCE</span>
-          <h1>Analysis Workspace</h1>
+    <div className="dashboard-v2">
+      <section className="dashboard-v2-hero">
+        <div className="hero-copy">
+          <div className="hero-kicker">
+            <span className="live-pulse" />
+            BLUESENTINEL · AI SONAR INTELLIGENCE
+          </div>
+          <h1>
+            Underwater
+            <span> Intelligence.</span>
+          </h1>
           <p>
-            Process side-scan sonar imagery, inspect CNN results and review
-            detected underwater anomalies.
+            Analyze side-scan sonar imagery with BlueSentinel's
+            multi-class CNN/U-Net pipeline and turn acoustic data into
+            actionable anomaly intelligence.
           </p>
-        </div>
 
-        <div className="system-indicator">
-          <span className="status-dot" />
-          <div>
-            <strong>AI SYSTEM ONLINE</strong>
-            <small>{formatDate} · IST</small>
-          </div>
-        </div>
-      </section>
+          <div className="hero-actions">
+            <button
+              className="hero-primary"
+              onClick={() =>
+                window.dispatchEvent(
+                  new CustomEvent("navigate-page", {
+                    detail: "Upload Sonar",
+                  }),
+                )
+              }
+            >
+              <Waves size={18} />
+              Analyze Sonar
+              <ChevronRight size={17} />
+            </button>
 
-      <section className="kpi-grid">
-        <KPI
-          icon={<Waves />}
-          label="SONAR INPUT"
-          value="READY"
-          text="Awaiting analysis image"
-        />
-        <KPI
-          icon={<ScanLine />}
-          label="AI ANALYSIS"
-          value={detections.length ? String(detections.length) : "—"}
-          text={detections.length ? "Detection results available" : "No analysis results"}
-          cyan
-        />
-        <KPI
-          icon={<ShieldCheck />}
-          label="MODEL STATUS"
-          value="ONLINE"
-          text="CNN inference service"
-          gold
-        />
-        <KPI
-          icon={<AlertTriangle />}
-          label="ANOMALIES"
-          value={detections.length ? String(detections.length) : "—"}
-          text={detections.length ? "Review detected regions" : "No results available"}
-          red
-        />
-      </section>
-
-      <section className="analysis-workspace">
-        <div className="workspace-card pipeline-card">
-          <div className="card-header">
-            <div>
-              <span className="eyebrow">AI PIPELINE</span>
-              <h3>Sonar Analysis Flow</h3>
+            <div className="hero-meta">
+              <span>AI ENGINE</span>
+              <strong>U-Net</strong>
             </div>
-            <span className="pipeline-status">READY</span>
+            <div className="hero-meta">
+              <span>CLASSES</span>
+              <strong>04</strong>
+            </div>
+          </div>
+        </div>
+
+        <div className="hero-visual">
+          <div className="sonar-radar">
+            <div className="radar-ring radar-ring-1" />
+            <div className="radar-ring radar-ring-2" />
+            <div className="radar-ring radar-ring-3" />
+            <div className="radar-cross horizontal" />
+            <div className="radar-cross vertical" />
+            <div className="radar-sweep" />
+            <div className="radar-point point-a" />
+            <div className="radar-point point-b" />
+            <div className="radar-center" />
+          </div>
+          <div className="radar-label">
+            <span>SONAR FIELD</span>
+            <strong>READY FOR ANALYSIS</strong>
+          </div>
+        </div>
+      </section>
+
+      <section className="dashboard-v2-stats">
+        <div className="stat-card">
+          <div className="stat-icon"><Waves size={19} /></div>
+          <div>
+            <span>SONAR INPUT</span>
+            <strong>READY</strong>
+            <small>Awaiting imagery</small>
+          </div>
+        </div>
+
+        <div className="stat-card stat-accent">
+          <div className="stat-icon"><ScanLine size={19} /></div>
+          <div>
+            <span>AI ANALYSIS</span>
+            <strong>{detections.length || "—"}</strong>
+            <small>{detections.length ? "Regions detected" : "No active result"}</small>
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-icon"><ShieldCheck size={19} /></div>
+          <div>
+            <span>MODEL ENGINE</span>
+            <strong>ONLINE</strong>
+            <small>Multi-class U-Net</small>
+          </div>
+        </div>
+
+        <div className="stat-card stat-warning">
+          <div className="stat-icon"><AlertTriangle size={19} /></div>
+          <div>
+            <span>ANOMALIES</span>
+            <strong>{detections.length || "—"}</strong>
+            <small>{detections.length ? "Requires review" : "No results yet"}</small>
+          </div>
+        </div>
+      </section>
+
+      <section className="dashboard-v2-main">
+        <div className="intel-panel">
+          <div className="panel-topline">
+            <div>
+              <span className="section-kicker">AI ANALYSIS PIPELINE</span>
+              <h2>From Sonar to Intelligence</h2>
+            </div>
+            <div className="system-ready">
+              <span />
+              SYSTEM READY
+            </div>
           </div>
 
-          <div className="pipeline">
+          <div className="pipeline-v2">
             {[
-              ["01", "INPUT", "Sonar Image"],
-              ["02", "QUALITY", "Image Check"],
+              ["01", "INPUT", "Side-scan sonar"],
+              ["02", "QUALITY", "Image validation"],
               ["03", "PROCESS", "Preprocessing"],
-              ["04", "CNN", "AI Inference"],
-              ["05", "RESULTS", "Detection"],
-              ["06", "GEO", "Geospatial"],
-              ["07", "REPORT", "Evidence"],
-            ].map(([number, title, subtitle], index) => (
-              <div className="pipeline-group" key={title}>
-                <div className="pipeline-step">
-                  <span>{number}</span>
+              ["04", "CNN", "U-Net inference"],
+              ["05", "DETECT", "Anomaly regions"],
+              ["06", "GEO", "Coordinates"],
+              ["07", "REPORT", "Evidence output"],
+            ].map(([num, title, sub], index) => (
+              <div className="pipeline-v2-item" key={title}>
+                <div className="pipeline-v2-node">
+                  <span>{num}</span>
                   <strong>{title}</strong>
-                  <small>{subtitle}</small>
+                  <small>{sub}</small>
                 </div>
-                {index < 6 && <div className="pipeline-line" />}
+                {index < 6 && <div className="pipeline-v2-connector" />}
               </div>
             ))}
           </div>
+
+          <div className="coverage-strip">
+            <div>
+              <span>SUPPORTED ANOMALIES</span>
+              <strong>Submarine Pipeline · Shipwreck · Ghost Net · Mine / Cylinder</strong>
+            </div>
+            <div className="coverage-status">
+              <span className="live-pulse" />
+              INFERENCE SERVICE ONLINE
+            </div>
+          </div>
         </div>
 
-        <div className="workspace-card action-card">
-          <span className="eyebrow">START ANALYSIS</span>
-          <h3>Upload Sonar Imagery</h3>
-          <p>
-            Begin a real analysis by providing a side-scan sonar image.
-          </p>
-          <button
-            className="primary-action"
-            onClick={() => window.dispatchEvent(new CustomEvent("navigate-page", { detail: "Upload Sonar" }))}
-          >
-            <Waves size={17} />
-            Open Sonar Laboratory
-          </button>
-        </div>
+        <aside className="system-panel">
+          <span className="section-kicker">SYSTEM OVERVIEW</span>
+          <h2>Analysis Stack</h2>
+
+          <div className="stack-row">
+            <div className="stack-symbol"><ScanLine size={17} /></div>
+            <div><span>SONAR LABORATORY</span><strong>INPUT READY</strong></div>
+            <i />
+          </div>
+
+          <div className="stack-row">
+            <div className="stack-symbol"><ShieldCheck size={17} /></div>
+            <div><span>AI INFERENCE</span><strong>U-NET ONLINE</strong></div>
+            <i />
+          </div>
+
+          <div className="stack-row">
+            <div className="stack-symbol"><Waves size={17} /></div>
+            <div><span>GEOSPATIAL</span><strong>GIS AVAILABLE</strong></div>
+            <i />
+          </div>
+
+          <div className="stack-row">
+            <div className="stack-symbol"><AlertTriangle size={17} /></div>
+            <div><span>DETECTION FEED</span><strong>{detections.length ? `${detections.length} ACTIVE` : "STANDBY"}</strong></div>
+            <i />
+          </div>
+
+          <div className="stack-footer">
+            <span>LAST SYSTEM CHECK</span>
+            <strong>{formatDate} · IST</strong>
+          </div>
+        </aside>
       </section>
 
-      <section className="results-grid">
-        <div className="workspace-card findings-card">
-          <div className="card-header">
+      <section className="dashboard-v2-bottom">
+        <div className="results-panel">
+          <div className="panel-heading">
             <div>
-              <span className="eyebrow">AI RESULTS</span>
-              <h3>Latest Detection Results</h3>
+              <span className="section-kicker">LIVE INTELLIGENCE</span>
+              <h2>Latest Detection Results</h2>
             </div>
-            <span className="result-count">
-              {detections.length} result{detections.length === 1 ? "" : "s"}
+            <span className="result-pill">
+              {detections.length} RESULT{detections.length === 1 ? "" : "S"}
             </span>
           </div>
 
           {detections.length === 0 ? (
-            <div className="empty-analysis">
-              <ScanLine size={32} />
-              <strong>No analysis results</strong>
-              <p>
-                Upload a sonar image to generate CNN detection results.
-              </p>
+            <div className="empty-v2">
+              <div className="empty-icon"><ScanLine size={25} /></div>
+              <div>
+                <strong>No sonar analysis yet</strong>
+                <p>Upload an image to generate real CNN/U-Net detection results.</p>
+              </div>
+              <button
+                onClick={() =>
+                  window.dispatchEvent(
+                    new CustomEvent("navigate-page", { detail: "Upload Sonar" }),
+                  )
+                }
+              >
+                Start Analysis <ChevronRight size={15} />
+              </button>
             </div>
           ) : (
-            <div className="detection-list">
-              {detections.slice(0, 5).map((detection) => (
+            <div className="detection-grid-v2">
+              {detections.slice(0, 6).map((detection) => (
                 <button
                   key={`${detection.type}-${detection.scan}-${detection.confidence}`}
-                  className="detection-row"
+                  className="detection-card-v2"
                   onClick={() => onDetection(detection)}
                 >
-                  <div className={`detection-icon ${detection.className}`}>
+                  <div className={`detection-v2-icon ${detection.className}`}>
                     <ScanLine size={18} />
                   </div>
-                  <div className="detection-info">
+                  <div className="detection-v2-copy">
                     <strong>{detection.type}</strong>
-                    <small>{detection.scan}</small>
+                    <span>{detection.scan}</span>
                   </div>
-                  <strong className="detection-score">
-                    {detection.confidence}%
-                  </strong>
-                  <ChevronRight size={17} />
+                  <div className="detection-v2-score">
+                    <strong>{detection.confidence}%</strong>
+                    <span>CONFIDENCE</span>
+                  </div>
+                  <ChevronRight size={16} />
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        <div className="workspace-card intelligence-card">
-          <span className="eyebrow">DECISION SUPPORT</span>
-          <h3>Anomaly Intelligence</h3>
+        <div className="decision-panel">
+          <span className="section-kicker">DECISION SUPPORT</span>
+          <h2>Detection Intelligence</h2>
 
-          <div className="intelligence-item">
+          <div className="decision-highlight">
+            <div className="decision-number">{detections.length}</div>
             <div>
-              <small>DETECTION ENGINE</small>
-              <strong>CNN / U-Net</strong>
+              <span>DETECTED REGIONS</span>
+              <strong>{detections.length ? "Review recommended" : "Awaiting sonar input"}</strong>
             </div>
-            <span className="status-badge">ACTIVE</span>
           </div>
 
-          <div className="intelligence-item">
-            <div>
-              <small>SEGMENTATION</small>
-              <strong>Analysis dependent</strong>
-            </div>
-            <span className="status-badge neutral">READY</span>
+          <div className="decision-line">
+            <span>Detected classes</span>
+            <strong>{detectedTypes.length || "—"}</strong>
           </div>
 
-          <div className="intelligence-item">
-            <div>
-              <small>GEOSPATIAL OUTPUT</small>
-              <strong>Available after detection</strong>
-            </div>
-            <span className="status-badge neutral">READY</span>
+          <div className="decision-line">
+            <span>AI engine</span>
+            <strong>CNN / U-Net</strong>
           </div>
 
-          <div className="intelligence-note">
-            <AlertTriangle size={17} />
-            <span>
-              AI results should be reviewed before operational decisions.
-            </span>
+          <div className="decision-line">
+            <span>Geospatial layer</span>
+            <strong>AVAILABLE</strong>
           </div>
-        </div>
-      </section>
 
-      <section className="workspace-card system-card">
-        <div className="card-header">
-          <div>
-            <span className="eyebrow">SYSTEM OVERVIEW</span>
-            <h3>BlueSentinel Processing Stack</h3>
-          </div>
-        </div>
-
-        <div className="system-grid">
-          <div>
-            <Waves />
-            <strong>Sonar Laboratory</strong>
-            <small>Input & preprocessing</small>
-          </div>
-          <div>
-            <ScanLine />
-            <strong>AI Laboratory</strong>
-            <small>CNN training & evaluation</small>
-          </div>
-          <div>
-            <Map />
-            <strong>Geospatial</strong>
-            <small>Detection mapping</small>
-          </div>
-          <div>
-            <FileText />
-            <strong>Reports</strong>
-            <small>Analysis evidence</small>
+          <div className="decision-note">
+            <AlertTriangle size={15} />
+            <span>AI detections should be reviewed alongside sonar context before operational decisions.</span>
           </div>
         </div>
       </section>
@@ -670,58 +731,6 @@ function Dashboard({
   );
 }
 
-function KPI({
-  icon,
-  label,
-  value,
-  unit,
-  text,
-  cyan,
-  gold,
-  red,
-  aqua,
-  purple,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  unit?: string;
-  text: string;
-  cyan?: boolean;
-  gold?: boolean;
-  red?: boolean;
-  aqua?: boolean;
-  purple?: boolean;
-}) {
-  const color = cyan
-    ? "cyan"
-    : gold
-      ? "gold"
-      : red
-        ? "red"
-        : aqua
-          ? "aqua"
-          : purple
-            ? "purple"
-            : "blue";
-
-  return (
-    <div className={`kpi ${color}`}>
-      <div className="kpi-icon">{icon}</div>
-
-      <div>
-        <span className="kpi-label">{label}</span>
-
-        <div className="kpi-value">
-          {value}
-          {unit && <small>{unit}</small>}
-        </div>
-
-        <span className="kpi-text">{text}</span>
-      </div>
-    </div>
-  );
-}
 
 
 
